@@ -3,9 +3,9 @@
 <head> 
   <meta http-equiv="content-type" content="text/html; charset=UTF-8"/> 
   <title>Last Events - Map with last.fm events</title> 
-  
+
   <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
-   
+
   <link type="text/css" href="stylesheets/style.css" media="screen" rel="stylesheet" />
 
   <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script> 
@@ -13,7 +13,35 @@
 
 </head> 
 <body onload="initialize()"> 
-  <div id="sidebar">&nbsp;</div>
-  <div id="map_canvas"></div>
-</body> 
-</html>
+  <div id="sidebar">
+    <div id="sidebar-header">
+      <h1>Search by artist</h1>
+    </div>
+    <form id="search">
+      <input type="text" name="q" size="26">
+      <button type="submit" title="Search">Search</button>
+    </form>
+    <hr />
+    <div id="events">
+      <div class="event">
+        <span class="calendar">
+          <span class="month">Mar</span>
+          <span class="day">11</span>
+        </span>
+        <span class="title">First event</span> 
+        <span class="info">event info</span>
+        <span class="mapit">show on map</span>
+      </div>
+      <div class="event">
+        <span class="calendar">
+          <span class="month">Mar</span>
+          <span class="day">26</span>
+        </span>
+        <span class="title">Second event</span> 
+        <span class="info">event info</span>
+        <span class="mapit">show on map</span>
+      </div>
+    </div>
+    <div id="map_canvas"></div>
+  </body> 
+  </html>

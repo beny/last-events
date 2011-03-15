@@ -1,9 +1,98 @@
-html { height: 100% }
-body { height: 100%; margin: 0px; padding: 0px }
+/* html */
+html { 
+  height: 100% 
+}
+
+body { 
+  height: 100%; 
+  margin: 0px; 
+  padding: 0p;
+  font-family: "Lucida Grande", Arial, Helvetica, Verdana, sans-serif;
+}
+  
+/* mapa */
 #map_canvas { height: 100% }
 
+/* sidebar */
 #sidebar {
   float: left;
   width: 300px;
-  background: black;
+}
+
+#sidebar p {
+  font-size: 12px;
+  
+}
+
+#sidebar-header {
+  padding: 5px;
+  color: white;
+  background-image:url('../images/header.png');
+  font-size: 14px;
+  text-align: center;
+}
+
+#sidebar-header h1{
+  padding: 0px;
+  margin: 0px;
+}
+
+#sidebar hr {
+  width: 90%;
+}
+
+/* search form */
+form#search {
+  padding: 5px;
+  text-align: center;
+}
+
+
+/* event */
+.event {
+  font-size: 12px;
+  padding: 0 0 10px 5px;
+}
+
+/* mini calendar sheet */
+span.calendar {
+  border: 1px solid #696969;
+}
+
+span.month {
+  background: #D51007;
+  padding: 1px;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+}
+
+span.mapit {
+  font-size: 9px;
+  color: blue;
+}
+
+span.mapit:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+span.info {
+  font-size: 9px;
+  color: blue;
+}
+
+span.info:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+span.day {
+  font-weight: bold;
+  padding-right: 2px;
+}
+
+.event span.title {
+  padding-left: 5px;
 }
