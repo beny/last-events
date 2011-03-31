@@ -12,29 +12,26 @@ public class Main
 		
 		
 		Parser lastApi = new Parser("c8e71fc5e7255264940483b4228c010f");
+
+		String url1 = lastApi.getEventsByLocation("Brno", 10, 5);
+		String url2 = lastApi.getEventsByArtist("Wohnout", 5);
 		
-		// TODO - osetrit errory
-		// TODO - osetrit diakritiku
+		System.out.println(url1);
+		System.out.println(url2);
+
+		Query query1 = new Query();
+		Query query2 = new Query();
 		
-		String res1 = lastApi.getEventsByLocation("Brno", 10, 5);
-		String res2 = lastApi.getEventsByArtist("Wohnout", 5);
+		String res1 = Parser.parseEvents(url1, query1, Query.Types.SEARCH_BY_LOCATION);
+		String res2 = Parser.parseEvents(url2, query2, Query.Types.SEARCH_BY_ARTIST);
 		
-		// TODO - parse xml
+		if(res1 == "") query1.printQuery();
+		if(res2 == "") query2.printQuery();
 		
-		Query query1 = null;
-		Query query2 = null;
-		
-		String msg1 = Parser.parseEventsByLocation(res1, query1);
-		//String msg2 = Parser.parseEventsByArtist(res2, query2);
-		
-		
-		
-		// TODO - data ulozit do objektu
-		
-		//System.out.println(res1);
-		//System.out.println(res2);		
-		
+				
+		// TODO - ukladani do storage
+		// TODO - kesovani podle timeoutu - podle toho bud nacist ze storage nebo z last.fm api
 		// TODO - vygenerovat XML pro JavaScript
-		// 3 typy: events (mapa), artists (naseptavac), location (naseptavac)
+		// TODO - 3 typy XML pro JS: events (mapa), artists (naseptavac), location (naseptavac)
 	}
 }

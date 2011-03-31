@@ -13,16 +13,15 @@ public class Event
 	private String url;	
 	private String image;
 	private Date date;
-	private Date parsedDate;
 		
 	private String venueName;
 	private String venueCity;
 	private String venueCountry;
-	private int venueLat;
-	private int venueLon;
+	private double venueLat; // optional
+	private double venueLon; // optional
 	
 	private ArrayList<String> artists;
-	private ArrayList<String> tags;
+	private ArrayList<String> tags; // optional
 	
 	
 	/**
@@ -37,7 +36,6 @@ public class Event
 		this.image = image;
 		this.date = date;
 		
-		this.parsedDate = new Date();
 		this.artists = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
 	}
@@ -46,7 +44,7 @@ public class Event
 	/**
 	 * Set venue data. 
 	 */
-	public void setVenue(String venueName, String venueCity, String venueCountry, int venueLat, int venueLon)
+	public void setVenue(String venueName, String venueCity, String venueCountry, double venueLat, double venueLon)
 	{
 		this.venueName = venueName;
 		this.venueCity = venueCity;
@@ -74,17 +72,42 @@ public class Event
 	}
 	
 	
+	/**
+	 * Print event info to standard output. 
+	 */
+	public void printEvent()
+	{
+		System.out.println("ID: " + id);
+		System.out.println("TITLE: " + title);
+		System.out.println("URL: " + url);
+		System.out.println("IMAGE: " + image);
+		System.out.println("DATE: " + date.toString());
+		System.out.println("VENUE NAME: " + venueName);
+		System.out.println("VENUE CITY: " + venueCity);
+		System.out.println("VENUE COUNTRY: " + venueCountry);
+		System.out.println("VENUE LAT: " + venueLat);
+		System.out.println("VENUE LON: " + venueLon);
+		for(int i=0;i<artists.size();i++)
+		{
+			System.out.println("ARTIST: " + artists.get(i));
+		}
+		for(int i=0;i<tags.size();i++)
+		{
+			System.out.println("TAG: " + tags.get(i));
+		}
+	}
+	
+	
 	public int getId() { return this.id; }
 	public String getTitle() { return this.title; }	
 	public String getUrl() { return this.url; }	
 	public String getImage() { return this.image; }
-	public Date getDate() { return this.date; }
-	public Date getParsedDate() { return this.parsedDate; }		
+	public Date getDate() { return this.date; }	
 	public String getVenueName() { return this.venueName; }
 	public String getVenueCity() { return this.venueCity; }
 	public String getVenueCountry() { return this.venueCountry; }
-	public int getVenueLat() { return this.venueLat; }
-	public int getVenueLon() { return this.venueLon; }	
+	public double getVenueLat() { return this.venueLat; }
+	public double getVenueLon() { return this.venueLon; }	
 	public ArrayList<String> getArtists() { return this.artists; }
 	public ArrayList<String> getTags() { return this.tags; } 
 }

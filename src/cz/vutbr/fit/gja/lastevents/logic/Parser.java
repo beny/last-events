@@ -23,6 +23,8 @@ public class Parser
 	
 	/**
 	 * Create parser instance with specific Last.fm API key.
+	 * 
+	 * @param apiKey Last.fm api key
 	 */
 	public Parser(String apiKey)
 	{
@@ -32,7 +34,11 @@ public class Parser
 	
 	/**
 	 * Get URL of method which get event's data by location.
-	 * @return URL 
+	 * 
+	 * @param location specifies a name of location to retrieve events for
+	 * @param distance find events within a specified radius 
+	 * @param limit the number of events
+	 * @return URL address to XML data
 	 */
 	public String getEventsByLocation(String location, int distance, int limit)
 	{
@@ -57,7 +63,10 @@ public class Parser
 	
 	/**
 	 * Get URL of method which get event's data by artist.
-	 * @return URL
+	 * 
+	 * @param artist the artist name
+	 * @param limit the number of events
+	 * @return URL address to XML data
 	 */
 	public String getEventsByArtist(String artist, int limit)
 	{
@@ -79,70 +88,17 @@ public class Parser
 	}
 
 	
-	//http://www.java-tips.org/java-se-tips/javax.xml.parsers/how-to-read-xml-file-in-java.html
-	//http://xmlbeans.apache.org/
-	
-	/*	 
-	 <?xml version="1.0" encoding="utf-8"?>
-<lfm status="ok">
-<events xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" location="Brno, Czech Republic" page="1" perPage="1" totalPages="59" total="59">
-    <event xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" >
-  <id>1816932</id>
-  <title>Caliban</title>
-  <artists>
-    <artist>Caliban</artist>
-    <headliner>Caliban</headliner>
-  </artists>
-    <venue>
-    <id>8881191</id>
-    <name>FAVAL music circus (Favál)</name>
-    <location>
-      <city>Brno</city>
-      <country>Czech Republic</country>
-      <street>Křížkovského 22</street>
-      <postalcode>603 00</postalcode>
-      <geo:point>
-         <geo:lat>49.184701</geo:lat>
-         <geo:long>16.579833</geo:long>
-      </geo:point>
-    </location>
-    <url>http://www.last.fm/venue/8881191+FAVAL+music+circus+%28Fav%C3%A1l%29</url>
-    <website>http://www.faval.cz/</website>
-    <phonenumber></phonenumber>
-    <image size="small">http://userserve-ak.last.fm/serve/34/6164313.gif</image>
-	<image size="medium">http://userserve-ak.last.fm/serve/64/6164313.gif</image>
-	<image size="large">http://userserve-ak.last.fm/serve/126/6164313.gif</image>
-	<image size="extralarge">http://userserve-ak.last.fm/serve/252/6164313.gif</image>
-	<image size="mega">http://userserve-ak.last.fm/serve/_/6164313/FAVAL+music+circus+Favl+Faval_logo.gif</image>
-  </venue>    <startDate>Sat, 26 Mar 2011 20:00:00</startDate>
-  <description></description>
-  <image size="small">http://userserve-ak.last.fm/serve/34/2124885.jpg</image>
-  <image size="medium">http://userserve-ak.last.fm/serve/64/2124885.jpg</image>
-  <image size="large">http://userserve-ak.last.fm/serve/126/2124885.jpg</image>
-  <image size="extralarge">http://userserve-ak.last.fm/serve/252/2124885.jpg</image>
-  <attendance>12</attendance>
-  <reviews>0</reviews>
-  <tag>lastfm:event=1816932</tag>    
-  <url>http://www.last.fm/event/1816932+Caliban+at+FAVAL+music+circus+%28Fav%C3%A1l%29+on+26+March+2011</url>
-  <website></website>
-    <tickets>
-  </tickets>
-    <cancelled>1</cancelled>
-    <tags>
-      <tag>metalcore</tag>
-      <tag>hardcore</tag>
-      <tag>metal</tag>
-    </tags>
-    </event></events></lfm>
-	 */
-	
-	
 	/**
 	 * Parse Last.fm events by location.
+	 * 
+	 * @param queryUrl url address of Last.fm XML file
+	 * @param output save parsed data to Query object
+	 * @param type type of query
+	 * @return error message
 	 */
-	public static String parseEventsByLocation(String queryUrl, Query output)
+	public static String parseEvents(String queryUrl, Query output, Query.Types type)
 	{
-		String errorMessage = "";
+		//http://www.java-tips.org/java-se-tips/javax.xml.parsers/how-to-read-xml-file-in-java.html
 
 		try 
 		{
@@ -152,36 +108,61 @@ public class Parser
 			Document doc = db.parse(queryUrl);			
 			doc.getDocumentElement().normalize();
 			
-			// XML root node
-			//Element root = doc.getDocumentElement();			
+			// check error
+			NodeList lfmList = doc.getElementsByTagName("lfm");
+		    Element lfmElement = (Element) lfmList.item(0);
+		    String status = lfmElement.getAttribute("status");
+		    ////System.out.println("STATUS: " + status);
+		    if(status.compareTo("failed") == 0)
+		    {
+		    	Element errorElement = (Element) lfmElement.getElementsByTagName("error").item(0);
+		    	String error = errorElement.getTextContent();
+		    	System.out.println("ERROR: " + error);
+		    }
 			
 			// events node 
 			NodeList eventsList = doc.getElementsByTagName("events");
 		    Element eventsElement = (Element) eventsList.item(0);
-		    String location = eventsElement.getAttribute("location");
-		    System.out.println("LOCATION: " + location);
+		    String keyword;
+		    if(type == Query.Types.SEARCH_BY_LOCATION)
+		    {
+		    	keyword = eventsElement.getAttribute("location");
+			    ////System.out.println("LOCATION: " + keyword);
+		    }
+		    else if(type == Query.Types.SEARCH_BY_ARTIST)
+		    {
+		    	keyword = eventsElement.getAttribute("artist");
+			    ////System.out.println("ARTIST: " + keyword);
+		    }
+		    else
+		    {
+		    	return "Unknown query type!";
+		    }
 		    
+		    // create query object
+		    output.setQuery(keyword, type);
+
 		    // event nodes
 		    NodeList eventList = doc.getElementsByTagName("event");
 		    for (int i = 0; i < eventList.getLength(); i++)
 		    {		    	
-		    	System.out.println("-----------------------------------------");
+		    	////System.out.println("-----------------------------------------");
 		    	Element eventElement = (Element) eventList.item(i);
 		    	
 		    	// id node
 		    	Element idElement = (Element) eventElement.getElementsByTagName("id").item(0);
 		    	int id = Integer.parseInt( idElement.getTextContent() );
-		    	System.out.println("EVENT #" + i + " ID: " + id);
+		    	////System.out.println("EVENT #" + i + " ID: " + id);
 		    	
 		    	// title node
 		    	Element titleElement = (Element) eventElement.getElementsByTagName("title").item(0);
 		    	String title = titleElement.getTextContent();
-		    	System.out.println("EVENT #" + i + " TITLE: " + title);
+		    	////System.out.println("EVENT #" + i + " TITLE: " + title);
 		    	
 		    	// url node
 		    	Element urlElement = (Element) eventElement.getElementsByTagName("url").item(0);
 		    	String url = urlElement.getTextContent();
-		    	System.out.println("EVENT #" + i + " URL: " + url);
+		    	////System.out.println("EVENT #" + i + " URL: " + url);
 		    	
 		    	// date node
 		    	Element startDateElement = (Element) eventElement.getElementsByTagName("startDate").item(0);
@@ -196,13 +177,13 @@ public class Parser
 				{
 					date = new Date(0);
 				}		    	
-		    	System.out.println("EVENT #" + i + " DATE: " + date.toString());
+		    	////System.out.println("EVENT #" + i + " DATE: " + date.toString());
 		    	
 		    	// image node
 		    	NodeList imageList = eventElement.getElementsByTagName("image");
 		    	Element imageElement = (Element) imageList.item( imageList.getLength()-1 );
 		    	String image = imageElement.getTextContent();
-		    	System.out.println("EVENT #" + i + " IMAGE: " + image);
+		    	////System.out.println("EVENT #" + i + " IMAGE: " + image);
 		    	
 		    	// venue node
 		    	Element venueElement = (Element) eventElement.getElementsByTagName("venue").item(0);
@@ -210,7 +191,7 @@ public class Parser
 		    	// venue name node
 		    	Element venueNameElement = (Element) venueElement.getElementsByTagName("name").item(0);
 		    	String venueName = venueNameElement.getTextContent();
-		    	System.out.println("EVENT #" + i + " VENUE NAME: " + venueName);
+		    	////System.out.println("EVENT #" + i + " VENUE NAME: " + venueName);
 		    	
 		    	// venue location node
 		    	Element locationElement = (Element) venueElement.getElementsByTagName("location").item(0);
@@ -218,42 +199,51 @@ public class Parser
 		    	// venue location city node
 		    	Element locationCityElement = (Element) locationElement.getElementsByTagName("city").item(0);
 		    	String locationCity = locationCityElement.getTextContent();
-		    	System.out.println("EVENT #" + i + " LOCATION CITY: " + locationCity);
+		    	////System.out.println("EVENT #" + i + " LOCATION CITY: " + locationCity);
 		    	
 		    	// venue location country node
 		    	Element locationCountryElement = (Element) locationElement.getElementsByTagName("country").item(0);
 		    	String locationCountry = locationCountryElement.getTextContent();
-		    	System.out.println("EVENT #" + i + " LOCATION COUNTRY: " + locationCountry);
+		    	////System.out.println("EVENT #" + i + " LOCATION COUNTRY: " + locationCountry);
 		    	
 		    	// venue location node
 		    	Element geoElement = (Element) locationElement.getElementsByTagName("geo:point").item(0);
 		    	
 		    	// venue location geo lat node
 		    	Element geoLatElement = (Element) geoElement.getElementsByTagName("geo:lat").item(0);
-		    	float geoLat = Float.parseFloat( geoLatElement.getTextContent() );
-		    	System.out.println("EVENT #" + i + " LOCATION LAT: " + geoLat);
+		    	double geoLat = 0;
+		    	if( geoLatElement.getTextContent() != "")
+		    	{
+		    		geoLat = Double.parseDouble( geoLatElement.getTextContent() );
+		    	}
+		    	////System.out.println("EVENT #" + i + " LOCATION LAT: " + geoLat);
 		    	
 		    	// venue location geo lon node
 		    	Element geoLonElement = (Element) geoElement.getElementsByTagName("geo:long").item(0);
-		    	float geoLon = Float.parseFloat( geoLonElement.getTextContent() );
-		    	System.out.println("EVENT #" + i + " LOCATION LON: " + geoLon);
+		    	double geoLon = 0;
+		    	if( geoLonElement.getTextContent() != "")
+		    	{
+			    	geoLon = Double.parseDouble( geoLonElement.getTextContent() );
+			    }
+		    	////System.out.println("EVENT #" + i + " LOCATION LON: " + geoLon);
 		    	
-		    	// artists node
-		    	Element artistsElement = (Element) eventElement.getElementsByTagName("artists").item(0);
+		    	// create event object
+		    	Event event = new Event(id, title, url, image, date);
+		    	event.setVenue(venueName, locationCity, locationCountry, geoLat, geoLon);
 		    	
 		    	// artist node
+		    	Element artistsElement = (Element) eventElement.getElementsByTagName("artists").item(0);
 		    	NodeList artistsList = artistsElement.getElementsByTagName("artist");
 		    	for (int j = 0; j < artistsList.getLength(); j++)
 		    	{
 		    		Element artistElement = (Element) artistsList.item(j);
 		    		String artist = artistElement.getTextContent();
-			    	System.out.println("EVENT #" + i + " ARTIST: " + artist);
+		    		event.addArtist(artist);
+			    	////System.out.println("EVENT #" + i + " ARTIST: " + artist);
 		    	}
 		    	
-		    	// tags node
-		    	Element tagsElement = (Element) eventElement.getElementsByTagName("tags").item(0);
-		    	
 		    	// tag node	
+		    	Element tagsElement = (Element) eventElement.getElementsByTagName("tags").item(0);
 		    	try
 		    	{
 			    	NodeList tagsList = tagsElement.getElementsByTagName("tag");
@@ -261,30 +251,23 @@ public class Parser
 			    	{
 			    		Element tagElement = (Element) tagsList.item(j);
 			    		String tag = tagElement.getTextContent();
-				    	System.out.println("EVENT #" + i + " TAG: " + tag);
+			    		event.addTag(tag);
+				    	////System.out.println("EVENT #" + i + " TAG: " + tag);
 			    	}
 		    	}
 		    	catch (Exception e) {}
-		    }		    
+		    	
+		    	// add event to query
+		    	output.addArtist(event);
+		    }
 		} 
 		catch (Exception e) 
 		{
 			e.printStackTrace();
+			////System.out.println("EXCEPTION: " + e.toString());
 			return e.toString();
 		}
 
-		return errorMessage;
+		return "";
 	}
-	
-	
-	/**
-	 * Parse Last.fm events by artist.
-	 */
-	public static String parseEventsByArtist(String queryUrl, Query output)
-	{
-		String errorMessage = "";
-		
-		return errorMessage;
-	}
-
 }

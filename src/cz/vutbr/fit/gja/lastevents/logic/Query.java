@@ -9,7 +9,7 @@ import java.util.Date;
 public class Query 
 {
 	private String keyword;
-	private int type;
+	private Query.Types type;
 	private Date date;
 	private ArrayList<Event> events;
 	
@@ -19,13 +19,33 @@ public class Query
 	/**
 	 * Create query. 
 	 */
-	public Query(String keyword, int type)
+	public Query()
+	{
+		this.date = new Date();
+		this.events = new ArrayList<Event>();
+	}
+	
+	
+	/**
+	 * Create query. 
+	 */
+	public Query(String keyword, Query.Types type)
 	{
 		this.keyword = keyword;
 		this.type = type;
 		
 		this.date = new Date();
 		this.events = new ArrayList<Event>();
+	}
+	
+	
+	/**
+	 * Set query. 
+	 */
+	public void setQuery(String keyword, Query.Types type)
+	{
+		this.keyword = keyword;
+		this.type = type;
 	}
 	
 	
@@ -38,8 +58,26 @@ public class Query
 	}
 	
 	
+	/**
+	 * Print query info to standard output. 
+	 */
+	public void printQuery()
+	{
+		System.out.println("----------------------------------------");
+		System.out.println("KEYWORD: " + keyword);
+		System.out.println("TYPE: " + type.toString());
+		System.out.println("DATE: " + date.toString());
+		for(int i=0;i<events.size();i++)
+		{
+			System.out.println("----------------------------------------");
+			System.out.println("EVENT #" + i + ":");
+			events.get(i).printEvent();			
+		}
+	}
+	
+	
 	public String getKeyword() { return this.keyword; }
-	public int getType() { return this.type; }
+	public Query.Types getType() { return this.type; }
 	public Date getDate() { return this.date; }
 	public ArrayList<Event> getEvents() { return this.events; }
 }
