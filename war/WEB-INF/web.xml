@@ -4,12 +4,24 @@ xmlns="http://java.sun.com/xml/ns/javaee"
 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
 	<servlet>
 		<servlet-name>Last_evetns</servlet-name>
 		<servlet-class>cz.vutbr.fit.gja.lastevents.Last_evetnsServlet</servlet-class>
 	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>Last_evetns</servlet-name>
+		<url-pattern>/last_evetns</url-pattern>
+	</servlet-mapping>
+	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	
+	<!-- API adapters -->
 	<servlet>
-		<servlet-name>RestletServlet</servlet-name>
+		<servlet-name>APIServlet</servlet-name>
 		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
 		<init-param>
 			<param-name>org.restlet.application</param-name>
@@ -18,16 +30,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>Last_evetns</servlet-name>
-		<url-pattern>/last_evetns</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>RestletServlet</servlet-name>
+		<servlet-name>APIServlet</servlet-name>
 		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
-	
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
+
 </web-app>
