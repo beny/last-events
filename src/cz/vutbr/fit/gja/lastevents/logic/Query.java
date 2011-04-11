@@ -3,6 +3,8 @@ package cz.vutbr.fit.gja.lastevents.logic;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.simple.JSONArray;
+
 /**
  * Data class represents one search query. 
  */
@@ -13,7 +15,7 @@ public class Query
 	private Date date;
 	private ArrayList<Event> events;
 	
-	enum Types { SEARCH_BY_ARTIST, SEARCH_BY_LOCATION };
+	public enum Types { SEARCH_BY_ARTIST, SEARCH_BY_LOCATION };
 	
 	
 	/**
@@ -75,6 +77,20 @@ public class Query
 		}
 	}
 	
+	/**
+	 * @return JSON representation of query
+	 */
+	@SuppressWarnings("unchecked")
+	public String getJSONQuery(){
+		
+		JSONArray eventsJSON = new JSONArray();
+		for(int i=0;i<events.size();i++){
+			eventsJSON.add(events.get(i).getJSONEvent());			
+		}
+		
+		return eventsJSON.toJSONString();
+
+	}
 	
 	public String getKeyword() { return this.keyword; }
 	public Query.Types getType() { return this.type; }

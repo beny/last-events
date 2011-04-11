@@ -3,6 +3,9 @@ package cz.vutbr.fit.gja.lastevents.logic;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 /**
  * Data class represents one last-event. 
  */
@@ -95,6 +98,69 @@ public class Event
 		{
 			System.out.println("TAG: " + tags.get(i));
 		}
+	}
+	
+	public String getEvent(){
+		
+		String result = new String();
+		result += "ID: " + id;
+		result += "TITLE: " + title;
+		result += "URL: " + url;
+		result += "IMAGE: " + image;
+		result += "DATE: " + date.toString();
+		result += "VENUE NAME: " + venueName;
+		result += "VENUE CITY: " + venueCity;
+		result += "VENUE COUNTRY: " + venueCountry;
+		result += "VENUE LAT: " + venueLat;
+		result += "VENUE LON: " + venueLon;
+		for(int i=0;i<artists.size();i++)
+		{
+			result += "ARTIST: " + artists.get(i);
+		}
+		for(int i=0;i<tags.size();i++)
+		{
+			result += "TAG: " + tags.get(i);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * @return JSON objekt s eventem
+	 */
+	@SuppressWarnings("unchecked")
+	public JSONObject getJSONEvent(){
+
+		JSONObject obj = new JSONObject();
+		obj.put("id", new Integer(id));
+		obj.put("title", title);
+		obj.put("url", url);
+		obj.put("image", image);
+		obj.put("date", date.toString());
+		
+		// venue object
+		JSONObject venueJSON = new JSONObject();
+		venueJSON.put("name", venueName);
+		venueJSON.put("city", venueCity);
+		venueJSON.put("country", venueCountry);
+		venueJSON.put("lat", venueLat);
+		venueJSON.put("lon", venueLon);
+		
+		obj.put("venue", venueJSON);
+		
+		JSONArray artistsJSON = new JSONArray();
+		for(int i=0;i<artists.size();i++){
+			artistsJSON.add(artists.get(i));
+		}
+		obj.put("artists", artistsJSON);
+		
+		JSONArray tagsJSON = new JSONArray();
+		for(int i=0;i<tags.size();i++){
+			tagsJSON.add(tags.get(i));
+		}
+		obj.put("tags", tagsJSON);
+		
+		return obj;
 	}
 	
 	
