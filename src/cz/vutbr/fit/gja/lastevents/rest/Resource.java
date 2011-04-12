@@ -16,11 +16,11 @@ import cz.vutbr.fit.gja.lastevents.logic.Query;
 public class Resource extends Restlet {
 
 	public static enum Type {ARTIST, ARTIST_WITH_COUNT, LOCATION, LOCATION_WITH_DISTANCE, LOCATION_WITH_DISTANCE_AND_COUNT};
+	public final static int DEFAULT_DISTANCE = 10;
+	public final static int DEFAULT_COUNT = 5;
 
 	private Type type;
 	private final static String KEY = "c8e71fc5e7255264940483b4228c010f";
-	private final static int DEFAULT_DISTANCE = 10;
-	private final static int DEFAULT_COUNT = 5;
 
 	public Resource(Type type) {
 		this.type = type;
@@ -69,8 +69,16 @@ public class Resource extends Restlet {
 		Query query = new Query();
 
 		String res = Parser.parseEvents(url, query, Query.Types.SEARCH_BY_ARTIST);
-		if(res == "") message = query.getJSONQuery();
 
-		response.setEntity(message, MediaType.TEXT_PLAIN);
+		// nenastaly zadne chyby
+		if(res == null) {
+			message = query.getJSONResult();
+			response.setEntity(message, MediaType.TEXT_PLAIN);
+		}
+		else {
+			response.setEntity("Error during requesting data: " + res, MediaType.TEXT_PLAIN);
+		}
+
+
 	}
 }

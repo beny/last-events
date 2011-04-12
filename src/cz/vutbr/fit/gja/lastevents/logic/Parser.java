@@ -14,29 +14,29 @@ import org.w3c.dom.NodeList;
 
 /**
  * Parser for Last.fm data.
- * Send requests to Last.fm server and get event's data in XML. 
+ * Send requests to Last.fm server and get event's data in XML.
  */
-public class Parser 
+public class Parser
 {
 	private String apiKey;
-	
-	
+
+
 	/**
 	 * Create parser instance with specific Last.fm API key.
-	 * 
+	 *
 	 * @param apiKey Last.fm api key
 	 */
 	public Parser(String apiKey)
 	{
 		this.apiKey = apiKey;
 	}
-	
-	
+
+
 	/**
 	 * Get URL of method which get event's data by location.
-	 * 
+	 *
 	 * @param location specifies a name of location to retrieve events for
-	 * @param distance find events within a specified radius 
+	 * @param distance find events within a specified radius
 	 * @param limit the number of events
 	 * @return URL address to XML data
 	 */
@@ -51,19 +51,19 @@ public class Parser
 			page (Optional) : The page number to fetch. Defaults to first page.
 			api_key (Required) : A Last.fm API key.
 		*/
-		
-		String url = "http://ws.audioscrobbler.com/2.0/?method=geo.getevents&location=" + location + 
-			"&distance=" + distance + 
-			"&limit=" + limit + 
+
+		String url = "http://ws.audioscrobbler.com/2.0/?method=geo.getevents&location=" + location +
+			"&distance=" + distance +
+			"&limit=" + limit +
 			"&api_key=" + apiKey;
 
 		return url;
 	}
-	
-	
+
+
 	/**
 	 * Get URL of method which get event's data by artist.
-	 * 
+	 *
 	 * @param artist the artist name
 	 * @param limit the number of events
 	 * @return URL address to XML data
@@ -79,18 +79,18 @@ public class Parser
 			api_key (Required) : A Last.fm API key.
 		*/
 
-		String url = "http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist=" + artist + 
-			"&autocorrect=1" + 
-			"&limit=" + limit + 
+		String url = "http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist=" + artist +
+			"&autocorrect=1" +
+			"&limit=" + limit +
 			"&api_key=" + apiKey;
-		
+
 		return url;
 	}
 
-	
+
 	/**
 	 * Parse Last.fm events by location.
-	 * 
+	 *
 	 * @param queryUrl url address of Last.fm XML file
 	 * @param output save parsed data to Query object
 	 * @param type type of query
@@ -100,14 +100,14 @@ public class Parser
 	{
 		//http://www.java-tips.org/java-se-tips/javax.xml.parsers/how-to-read-xml-file-in-java.html
 
-		try 
+		try
 		{
 			// inicialization of XML parser
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(queryUrl);			
+			Document doc = db.parse(queryUrl);
 			doc.getDocumentElement().normalize();
-			
+
 			// check error
 			NodeList lfmList = doc.getElementsByTagName("lfm");
 		    Element lfmElement = (Element) lfmList.item(0);
@@ -119,8 +119,8 @@ public class Parser
 		    	String error = errorElement.getTextContent();
 		    	System.out.println("ERROR: " + error);
 		    }
-			
-			// events node 
+
+			// events node
 			NodeList eventsList = doc.getElementsByTagName("events");
 		    Element eventsElement = (Element) eventsList.item(0);
 		    String keyword;
@@ -138,32 +138,32 @@ public class Parser
 		    {
 		    	return "Unknown query type!";
 		    }
-		    
+
 		    // create query object
 		    output.setQuery(keyword, type);
 
 		    // event nodes
 		    NodeList eventList = doc.getElementsByTagName("event");
 		    for (int i = 0; i < eventList.getLength(); i++)
-		    {		    	
+		    {
 		    	////System.out.println("-----------------------------------------");
 		    	Element eventElement = (Element) eventList.item(i);
-		    	
+
 		    	// id node
 		    	Element idElement = (Element) eventElement.getElementsByTagName("id").item(0);
 		    	int id = Integer.parseInt( idElement.getTextContent() );
 		    	////System.out.println("EVENT #" + i + " ID: " + id);
-		    	
+
 		    	// title node
 		    	Element titleElement = (Element) eventElement.getElementsByTagName("title").item(0);
 		    	String title = titleElement.getTextContent();
 		    	////System.out.println("EVENT #" + i + " TITLE: " + title);
-		    	
+
 		    	// url node
 		    	Element urlElement = (Element) eventElement.getElementsByTagName("url").item(0);
 		    	String url = urlElement.getTextContent();
 		    	////System.out.println("EVENT #" + i + " URL: " + url);
-		    	
+
 		    	// date node
 		    	Element startDateElement = (Element) eventElement.getElementsByTagName("startDate").item(0);
 		    	String startDate = startDateElement.getTextContent();
@@ -173,42 +173,42 @@ public class Parser
 		    		DateFormat myDateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss", Locale.US);
 		    		date = myDateFormat.parse(startDate);
 		    	}
-		    	catch (Exception e) 
+		    	catch (Exception e)
 				{
 					date = new Date(0);
-				}		    	
+				}
 		    	////System.out.println("EVENT #" + i + " DATE: " + date.toString());
-		    	
+
 		    	// image node
 		    	NodeList imageList = eventElement.getElementsByTagName("image");
 		    	Element imageElement = (Element) imageList.item( imageList.getLength()-1 );
 		    	String image = imageElement.getTextContent();
 		    	////System.out.println("EVENT #" + i + " IMAGE: " + image);
-		    	
+
 		    	// venue node
 		    	Element venueElement = (Element) eventElement.getElementsByTagName("venue").item(0);
-		    	
+
 		    	// venue name node
 		    	Element venueNameElement = (Element) venueElement.getElementsByTagName("name").item(0);
 		    	String venueName = venueNameElement.getTextContent();
 		    	////System.out.println("EVENT #" + i + " VENUE NAME: " + venueName);
-		    	
+
 		    	// venue location node
 		    	Element locationElement = (Element) venueElement.getElementsByTagName("location").item(0);
-		    	
+
 		    	// venue location city node
 		    	Element locationCityElement = (Element) locationElement.getElementsByTagName("city").item(0);
 		    	String locationCity = locationCityElement.getTextContent();
 		    	////System.out.println("EVENT #" + i + " LOCATION CITY: " + locationCity);
-		    	
+
 		    	// venue location country node
 		    	Element locationCountryElement = (Element) locationElement.getElementsByTagName("country").item(0);
 		    	String locationCountry = locationCountryElement.getTextContent();
 		    	////System.out.println("EVENT #" + i + " LOCATION COUNTRY: " + locationCountry);
-		    	
+
 		    	// venue location node
 		    	Element geoElement = (Element) locationElement.getElementsByTagName("geo:point").item(0);
-		    	
+
 		    	// venue location geo lat node
 		    	Element geoLatElement = (Element) geoElement.getElementsByTagName("geo:lat").item(0);
 		    	double geoLat = 0;
@@ -217,7 +217,7 @@ public class Parser
 		    		geoLat = Double.parseDouble( geoLatElement.getTextContent() );
 		    	}
 		    	////System.out.println("EVENT #" + i + " LOCATION LAT: " + geoLat);
-		    	
+
 		    	// venue location geo lon node
 		    	Element geoLonElement = (Element) geoElement.getElementsByTagName("geo:long").item(0);
 		    	double geoLon = 0;
@@ -226,11 +226,11 @@ public class Parser
 			    	geoLon = Double.parseDouble( geoLonElement.getTextContent() );
 			    }
 		    	////System.out.println("EVENT #" + i + " LOCATION LON: " + geoLon);
-		    	
+
 		    	// create event object
 		    	Event event = new Event(id, title, url, image, date);
 		    	event.setVenue(venueName, locationCity, locationCountry, geoLat, geoLon);
-		    	
+
 		    	// artist node
 		    	Element artistsElement = (Element) eventElement.getElementsByTagName("artists").item(0);
 		    	NodeList artistsList = artistsElement.getElementsByTagName("artist");
@@ -241,8 +241,8 @@ public class Parser
 		    		event.addArtist(artist);
 			    	////System.out.println("EVENT #" + i + " ARTIST: " + artist);
 		    	}
-		    	
-		    	// tag node	
+
+		    	// tag node
 		    	Element tagsElement = (Element) eventElement.getElementsByTagName("tags").item(0);
 		    	try
 		    	{
@@ -256,18 +256,18 @@ public class Parser
 			    	}
 		    	}
 		    	catch (Exception e) {}
-		    	
+
 		    	// add event to query
 		    	output.addArtist(event);
 		    }
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 			////System.out.println("EXCEPTION: " + e.toString());
 			return e.toString();
 		}
 
-		return "";
+		return null;
 	}
 }
