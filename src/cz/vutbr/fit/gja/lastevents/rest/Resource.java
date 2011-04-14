@@ -28,39 +28,45 @@ public class Resource extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-
+		
 		Parser lastApi = new Parser(KEY);
 		String message = new String();
 		String url = new String();
+		Query.Types typeQuery = Query.Types.SEARCH_BY_ARTIST;
 
 		switch (type) {
 		case ARTIST:
 			url = lastApi.getEventsByArtist(
 					(String)request.getAttributes().get("query"),
 					DEFAULT_COUNT);
+			typeQuery = Query.Types.SEARCH_BY_ARTIST;
 			break;
 		case ARTIST_WITH_COUNT:
 			url = lastApi.getEventsByArtist(
 					(String)request.getAttributes().get("query"),
 					new Integer(request.getAttributes().get("count").toString()));
+			typeQuery = Query.Types.SEARCH_BY_ARTIST;
 			break;
 		case LOCATION:
 			url = lastApi.getEventsByLocation(
 					(String) request.getAttributes().get("query"),
 					DEFAULT_DISTANCE,
 					DEFAULT_COUNT);
+			typeQuery = Query.Types.SEARCH_BY_LOCATION;
 			break;
 		case LOCATION_WITH_DISTANCE:
 			url = lastApi.getEventsByLocation(
 					(String)request.getAttributes().get("query"),
 					new Integer(request.getAttributes().get("distance").toString()),
 					DEFAULT_COUNT);
+			typeQuery = Query.Types.SEARCH_BY_LOCATION;
 			break;
 		case LOCATION_WITH_DISTANCE_AND_COUNT:
 			url = lastApi.getEventsByLocation(
 					(String)request.getAttributes().get("query"),
 					new Integer(request.getAttributes().get("distance").toString()),
 					new Integer(request.getAttributes().get("count").toString()));
+			typeQuery = Query.Types.SEARCH_BY_LOCATION;
 			break;
 		default:
 			break;
@@ -68,7 +74,7 @@ public class Resource extends Restlet {
 
 		Query query = new Query();
 
-		String res = Parser.parseEvents(url, query, Query.Types.SEARCH_BY_ARTIST);
+		String res = Parser.parseEvents(url, query, typeQuery);
 
 		// nenastaly zadne chyby
 		if(res == null) {
