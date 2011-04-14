@@ -1,7 +1,6 @@
 package cz.vutbr.fit.gja.lastevents.logic;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.json.simple.JSONArray;
 
@@ -64,20 +63,19 @@ public class QueryArtist
 		}
 	}
 
-	// TODO dodelat JSON 
-//	/**
-//	 * @return JSON representation of query result
-//	 */
-//	@SuppressWarnings("unchecked")
-//	public String getJSONResult(){
-//
-//		JSONArray namesJSON = new JSONArray();
-//		for(int i=0;i<names.size();i++){
-//			namesJSON.add(names.get(i).getJSONName());
-//		}
-//
-//		return namesJSON.toJSONString();
-//	}
+	/**
+	 * @return JSON reprezentace dat
+	 */
+	@SuppressWarnings("unchecked")
+	public String getJSONResult(){
+
+		JSONArray namesJSON = new JSONArray();
+		for(int i=0;i<names.size();i++){
+			namesJSON.add(names.get(i));
+		}
+
+		return namesJSON.toJSONString();
+	}
 
 	public String getKeyword() { return this.keyword; }
 	public ArrayList<String> getNames() { return this.names; }

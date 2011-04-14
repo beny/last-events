@@ -26,6 +26,8 @@ public class API extends Application {
 		Router router = new Router(getContext());
 
 		// nastaveni jednotlivych rout
+		router.attach("/names/{query}", new Resource(Type.NAMES));
+		router.attach("/names/{query}/{count}", new Resource(Type.NAMES_WITH_COUNTS));
 		router.attach("/artist/{query}", new Resource(Type.ARTIST));
 		router.attach("/artist/{query}/{count}", new Resource(Type.ARTIST_WITH_COUNT));
 		router.attach("/location/{query}", new Resource(Type.LOCATION));

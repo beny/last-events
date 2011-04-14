@@ -16,7 +16,8 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryArtist;
  */
 public class Resource extends Restlet {
 
-	public static enum Type {ARTIST, ARTIST_WITH_COUNT, LOCATION, LOCATION_WITH_DISTANCE, LOCATION_WITH_DISTANCE_AND_COUNT};
+	public static enum Type {ARTIST, ARTIST_WITH_COUNT, LOCATION, LOCATION_WITH_DISTANCE, LOCATION_WITH_DISTANCE_AND_COUNT,
+		NAMES, NAMES_WITH_COUNTS};
 	public final static int DEFAULT_DISTANCE = 10;
 	public final static int DEFAULT_COUNT = 5;
 
@@ -29,7 +30,7 @@ public class Resource extends Restlet {
 
 	@Override
 	public void handle(Request request, Response response) {
-		
+
 		Parser lastApi = new Parser(KEY);
 		String message = new String();
 		String url = new String();
@@ -70,29 +71,40 @@ public class Resource extends Restlet {
 					new Integer(request.getAttributes().get("count").toString()));
 			typeQuery = Query.Types.SEARCH_BY_LOCATION;
 			break;
+		case NAMES:
+			url = lastApi.getArtists(keyword, DEFAULT_COUNT);
+			break;
+		case NAMES_WITH_COUNTS:
+			url = lastApi.getArtists(keyword,
+					new Integer(request.getAttributes().get("count").toString()));
+			break;
 		default:
 			break;
 		}
-		
-		
-//		// TODO pridat nejakou logiku/podminku pro odliseni dotazu na loadArtists || loadEvents		
-//		QueryArtist queryArtist = new QueryArtist();		
-//		String url2 = lastApi.getArtists("Cher", 5);		
-//		Parser.loadArtists(url2, queryArtist);
-//		queryArtist.printQuery();
-				
 
-		Query query = new Query();
-		String res = Parser.loadEvents(keyword, url, query, typeQuery);
-		
-		
-		// nenastaly zadne chyby
-		if(res == null) {
-			message = query.getJSONResult();
-			response.setEntity(message, MediaType.TEXT_PLAIN);
+		// vyber z jakych objektu mas odpovidat
+		String res = new String();
+		if(type == Type.NAMES || type == Type.NAMES_WITH_COUNTS){
+			QueryArtist queryArtist = new QueryArtist();
+			res = Parser.loadArtists(url, queryArtist);
+			if(res == null) {
+				message = queryArtist.getJSONResult();
+				response.setEntity(message, MediaType.TEXT_PLAIN);
+			}
 		}
 		else {
+			Query query = new Query();
+			res = Parser.loadEvents(keyword, url, query, typeQuery);
+			if(res == null) {
+				message = query.getJSONResult();
+				response.setEntity(message, MediaType.TEXT_PLAIN);
+			}
+		}
+
+		// nastala chyba
+		if(res != null){
 			response.setEntity("Error during requesting data: " + res, MediaType.TEXT_PLAIN);
 		}
+
 	}
 }

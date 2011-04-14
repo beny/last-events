@@ -7,6 +7,11 @@ import org.junit.Test;
 import cz.vutbr.fit.gja.lastevents.logic.Parser;
 import cz.vutbr.fit.gja.lastevents.logic.Query;
 
+/**
+ * Soubor s testy pro API last FM
+ * @author Ondrej Benes <xbenes00@stud.fit.vutbr.cz>
+ *
+ */
 public class LastFmApiTest {
 
 	private Parser lastApi;

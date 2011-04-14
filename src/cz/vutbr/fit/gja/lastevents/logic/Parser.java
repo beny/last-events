@@ -3,19 +3,14 @@ package cz.vutbr.fit.gja.lastevents.logic;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import javax.jdo.PersistenceManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
-import cz.vutbr.fit.gja.lastevents.storage.PMF;
-import cz.vutbr.fit.gja.lastevents.storage.QueryStore;
 
 /**
  * Parser for Last.fm data.
@@ -91,8 +86,8 @@ public class Parser
 
 		return url;
 	}
-	
-	
+
+
 	/**
 	 * Get URL of method which search artist's by a keyword.
 	 *
@@ -300,7 +295,7 @@ public class Parser
 		return null;
 	}
 
-	
+
 	/**
 	 * Parse Last.fm artists.
 	 *
@@ -324,35 +319,35 @@ public class Parser
 			NodeList lfmList = doc.getElementsByTagName("lfm");
 		    Element lfmElement = (Element) lfmList.item(0);
 		    String status = lfmElement.getAttribute("status");
-		    System.out.println("STATUS: " + status);
+//		    System.out.println("STATUS: " + status);
 		    if(status.compareTo("failed") == 0)
 		    {
 		    	Element errorElement = (Element) lfmElement.getElementsByTagName("error").item(0);
 		    	String error = errorElement.getTextContent();
-		    	System.out.println("ERROR: " + error);
+//		    	System.out.println("ERROR: " + error);
 		    }
 
 		    // results node
 			NodeList resultsList = doc.getElementsByTagName("results");
 		    Element resultsElement = (Element) resultsList.item(0);
 		    String keyword = resultsElement.getAttribute("for");
-		    System.out.println("KEYWORD: " + keyword);
+//		    System.out.println("KEYWORD: " + keyword);
 
 		    // create query object
 		    output.setKeyword(keyword);
-		    
+
 		    // artist nodes
 		    NodeList artistList = doc.getElementsByTagName("artist");
 		    for (int i = 0; i < artistList.getLength(); i++)
 		    {
-		    	System.out.println("-----------------------------------------");
+//		    	System.out.println("-----------------------------------------");
 		    	Element artistElement = (Element) artistList.item(i);
 
 		    	// name node
 		    	Element nameElement = (Element) artistElement.getElementsByTagName("name").item(0);
 		    	String name = nameElement.getTextContent();
-		    	System.out.println("ARTIST #" + i + " NAME: " + name);
-		    	
+//		    	System.out.println("ARTIST #" + i + " NAME: " + name);
+
 		    	output.addName(name);
 		    }
 		}
@@ -365,7 +360,7 @@ public class Parser
 
 		return null;
 	}
-	
+
 
 	/**
 	 * Load Last.fm events from storage or XML.
@@ -378,19 +373,19 @@ public class Parser
 	 */
 	public static String loadEvents(String keyword, String queryUrl, Query output, Query.Types type)
 	{
-		// TODO zkontroluj storage zda je tam hledany zaznam		
+		// TODO zkontroluj storage zda je tam hledany zaznam
 		// TODO pokud je, zkontroluj timeout
 		// TODO		pokud je v poradku, vrat zaznam ze storage
 		// TODO		jinak nacti data z XML a aktualizuj ve storage
-		// TODO jinak nacti data z XML a uloz do storage		
-		
+		// TODO jinak nacti data z XML a uloz do storage
+
 		String err;
-		err = parseEvents(queryUrl, output, type);		
-		
-		
+		err = parseEvents(queryUrl, output, type);
+
+
 //		System.out.println("STORAGE TEST");
 //		PersistenceManager pm;
-		
+
 
 //		// ukladani do databaze
 //		Date date = new Date();
@@ -398,23 +393,23 @@ public class Parser
 //		QueryStore data2 = new QueryStore("Ewa", 0, date);
 //		QueryStore data3 = new QueryStore("Iron Maiden", 0, date);
 //		QueryStore data4 = new QueryStore("Brno", 1, date);
-//		
+//
 //		pm = PMF.get().getPersistenceManager();
-//        try 
+//        try
 //        {
 //            //pm.makePersistent(data1);
 //            pm.makePersistent(data2);
 //            pm.makePersistent(data3);
 //            pm.makePersistent(data4);
 //            System.out.println("ukladam data do storage...");
-//        } 
-//        finally 
+//        }
+//        finally
 //        {
 //            pm.close();
 //        }
 
-        
-		
+
+
 //		// nacteni dat ze storage
 //        pm = PMF.get().getPersistenceManager();
 //        String query = "select from " + QueryStore.class.getName();
@@ -429,10 +424,10 @@ public class Parser
 //        	}
 //        }
 //        pm.close();
-		
-        
-        
-        
+
+
+
+
 		return err;
 	}
 }
