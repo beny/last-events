@@ -3,14 +3,19 @@ package cz.vutbr.fit.gja.lastevents.logic;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import javax.jdo.PersistenceManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import cz.vutbr.fit.gja.lastevents.storage.PMF;
+import cz.vutbr.fit.gja.lastevents.storage.QueryStore;
 
 /**
  * Parser for Last.fm data.
@@ -81,6 +86,30 @@ public class Parser
 
 		String url = "http://ws.audioscrobbler.com/2.0/?method=artist.getevents&artist=" + artist +
 			"&autocorrect=1" +
+			"&limit=" + limit +
+			"&api_key=" + apiKey;
+
+		return url;
+	}
+	
+	
+	/**
+	 * Get URL of method which search artist's by a keyword.
+	 *
+	 * @param artist the artist name for match
+	 * @param limit the number of artists
+	 * @return URL address to XML data
+	 */
+	public String getArtists(String artist, int limit)
+	{
+		/*
+		 	limit (Optional) : The number of results to fetch per page. Defaults to 50.
+			page (Optional) : The page number to fetch. Defaults to first page.
+			artist (Required) : The artist name
+			api_key (Required) : A Last.fm API key.
+		*/
+
+		String url = "http://ws.audioscrobbler.com/2.0/?method=artist.search&artist=" + artist +
 			"&limit=" + limit +
 			"&api_key=" + apiKey;
 
@@ -269,5 +298,141 @@ public class Parser
 		}
 
 		return null;
+	}
+
+	
+	/**
+	 * Parse Last.fm artists.
+	 *
+	 * @param queryUrl url address of Last.fm XML file
+	 * @param output save parsed data to QueryArtist object
+	 * @return error message
+	 */
+	public static String loadArtists(String queryUrl, QueryArtist output)
+	{
+		//http://www.java-tips.org/java-se-tips/javax.xml.parsers/how-to-read-xml-file-in-java.html
+
+		try
+		{
+			// inicialization of XML parser
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(queryUrl);
+			doc.getDocumentElement().normalize();
+
+			// check error
+			NodeList lfmList = doc.getElementsByTagName("lfm");
+		    Element lfmElement = (Element) lfmList.item(0);
+		    String status = lfmElement.getAttribute("status");
+		    System.out.println("STATUS: " + status);
+		    if(status.compareTo("failed") == 0)
+		    {
+		    	Element errorElement = (Element) lfmElement.getElementsByTagName("error").item(0);
+		    	String error = errorElement.getTextContent();
+		    	System.out.println("ERROR: " + error);
+		    }
+
+		    // results node
+			NodeList resultsList = doc.getElementsByTagName("results");
+		    Element resultsElement = (Element) resultsList.item(0);
+		    String keyword = resultsElement.getAttribute("for");
+		    System.out.println("KEYWORD: " + keyword);
+
+		    // create query object
+		    output.setKeyword(keyword);
+		    
+		    // artist nodes
+		    NodeList artistList = doc.getElementsByTagName("artist");
+		    for (int i = 0; i < artistList.getLength(); i++)
+		    {
+		    	System.out.println("-----------------------------------------");
+		    	Element artistElement = (Element) artistList.item(i);
+
+		    	// name node
+		    	Element nameElement = (Element) artistElement.getElementsByTagName("name").item(0);
+		    	String name = nameElement.getTextContent();
+		    	System.out.println("ARTIST #" + i + " NAME: " + name);
+		    	
+		    	output.addName(name);
+		    }
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			////System.out.println("EXCEPTION: " + e.toString());
+			return e.toString();
+		}
+
+		return null;
+	}
+	
+
+	/**
+	 * Load Last.fm events from storage or XML.
+	 *
+	 * @param keyword for check keyword in storage
+	 * @param queryUrl url address of Last.fm XML file
+	 * @param output save data from storage or XML to Query object
+	 * @param type type of query
+	 * @return error message
+	 */
+	public static String loadEvents(String keyword, String queryUrl, Query output, Query.Types type)
+	{
+		// TODO zkontroluj storage zda je tam hledany zaznam		
+		// TODO pokud je, zkontroluj timeout
+		// TODO		pokud je v poradku, vrat zaznam ze storage
+		// TODO		jinak nacti data z XML a aktualizuj ve storage
+		// TODO jinak nacti data z XML a uloz do storage		
+		
+		String err;
+		err = parseEvents(queryUrl, output, type);		
+		
+		
+//		System.out.println("STORAGE TEST");
+//		PersistenceManager pm;
+		
+
+//		// ukladani do databaze
+//		Date date = new Date();
+//		//QueryStore data1 = new QueryStore("Wohnouti", 0, date);
+//		QueryStore data2 = new QueryStore("Ewa", 0, date);
+//		QueryStore data3 = new QueryStore("Iron Maiden", 0, date);
+//		QueryStore data4 = new QueryStore("Brno", 1, date);
+//		
+//		pm = PMF.get().getPersistenceManager();
+//        try 
+//        {
+//            //pm.makePersistent(data1);
+//            pm.makePersistent(data2);
+//            pm.makePersistent(data3);
+//            pm.makePersistent(data4);
+//            System.out.println("ukladam data do storage...");
+//        } 
+//        finally 
+//        {
+//            pm.close();
+//        }
+
+        
+		
+//		// nacteni dat ze storage
+//        pm = PMF.get().getPersistenceManager();
+//        String query = "select from " + QueryStore.class.getName();
+//        List<QueryStore> data = (List<QueryStore>) pm.newQuery(query).execute();
+//        if(!data.isEmpty())
+//        {
+//        	QueryStore s;
+//        	for(int i=0;i<data.size();i++)
+//        	{
+//        		s = data.get(i);
+//        		System.out.println("STORAGE: " + s.getKeyword() + "|" + s.getType() + "|" + s.getDate());
+//        	}
+//        }
+//        pm.close();
+		
+        
+        
+        
+		return err;
 	}
 }
