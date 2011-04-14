@@ -17,7 +17,7 @@ public class LastFmApiTest {
 	private Parser lastApi;
 
 	public LastFmApiTest() {
-		lastApi = new Parser("c8e71fc5e7255264940483b4228c010f");
+		lastApi = new Parser("c8e71fc5e7255264940483b4228c010f", "lastevents");
 	}
 
 	@Test

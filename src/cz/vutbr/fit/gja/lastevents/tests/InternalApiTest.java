@@ -42,9 +42,9 @@ public class InternalApiTest {
 
 	@Test
 	public void testNamesCount(){
-		assertEquals(getData(Type.NAMES, "Madonna", Resource.DEFAULT_COUNT).size(), Resource.DEFAULT_COUNT);
-		assertEquals(getData(Type.NAMES, "Madonna", Resource.DEFAULT_COUNT),
-				getData(Type.NAMES, "Madonna", Resource.DEFAULT_COUNT));
+		assertEquals(getData(Type.SEARCH_ARTIST, "Madonna", Resource.DEFAULT_COUNT).size(), Resource.DEFAULT_COUNT);
+		assertEquals(getData(Type.SEARCH_ARTIST, "Madonna", Resource.DEFAULT_COUNT),
+				getData(Type.SEARCH_ARTIST, "Madonna", Resource.DEFAULT_COUNT));
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class InternalApiTest {
 
 		if(type == Type.ARTIST) typeString = "artist";
 		if(type == Type.LOCATION) typeString = "location";
-		if(type == Type.NAMES) typeString = "names";
+		if(type == Type.SEARCH_ARTIST) typeString = "names";
 
 		if(!typeString.isEmpty()){
 			try {

@@ -44,7 +44,7 @@ $(document).ready(function(){
 	$("#q").autocomplete({
 		source: function(request, response) {
 			$.ajax({
-				url: "api/names/"+request.term,//request url
+				url: "api/search/artist/"+request.term,//request url
 				dataType: "json",
 				success: function(data) {
 					response($.map(data, function(item) {

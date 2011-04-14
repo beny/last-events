@@ -1,5 +1,8 @@
 package cz.vutbr.fit.gja.lastevents.logic;
 
+/**
+ * Testing class.
+ */
 public class Main 
 {
 	public static void main (String arg[])
@@ -9,9 +12,8 @@ public class Main
 		// API Key is c8e71fc5e7255264940483b4228c010f
 		// GEO.GET_EVENTS: http://www.last.fm/api/show?service=270
 		// ARTIST.GET_EVENTS: http://www.last.fm/api/show?service=117
-		
-		
-		Parser lastApi = new Parser("c8e71fc5e7255264940483b4228c010f");
+				
+		Parser lastApi = new Parser("c8e71fc5e7255264940483b4228c010f", "lastevents");
 
 		String url1 = lastApi.getEventsByLocation("Brno", 10, 5);
 		String url2 = lastApi.getEventsByArtist("Wohnout", 5);
@@ -27,11 +29,5 @@ public class Main
 		
 		if(res1 == "") query1.printQuery();
 		if(res2 == "") query2.printQuery();
-		
-				
-		// TODO - ukladani do storage
-		// TODO - kesovani podle timeoutu - podle toho bud nacist ze storage nebo z last.fm api
-		// TODO - vygenerovat XML pro JavaScript
-		// TODO - 3 typy XML pro JS: events (mapa), artists (naseptavac), location (naseptavac)
 	}
 }
