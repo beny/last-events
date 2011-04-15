@@ -6,7 +6,7 @@ import org.restlet.Restlet;
 import org.restlet.data.MediaType;
 
 import cz.vutbr.fit.gja.lastevents.logic.Parser;
-import cz.vutbr.fit.gja.lastevents.logic.Query;
+import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
 import cz.vutbr.fit.gja.lastevents.logic.QueryArtist;
 import cz.vutbr.fit.gja.lastevents.logic.QueryLocation;
 
@@ -38,41 +38,41 @@ public class Resource extends Restlet {
 		String message = new String();
 		String url = new String();
 		String keyword = (String) request.getAttributes().get("query");
-		Query.Types typeQuery = Query.Types.SEARCH_BY_ARTIST;
+		QueryEvent.Types typeQuery = QueryEvent.Types.SEARCH_BY_ARTIST;
 
 		switch (type) {
 		case ARTIST:
 			url = lastApi.getEventsByArtist(
 					keyword,
 					DEFAULT_COUNT);
-			typeQuery = Query.Types.SEARCH_BY_ARTIST;
+			typeQuery = QueryEvent.Types.SEARCH_BY_ARTIST;
 			break;
 		case ARTIST_WITH_COUNT:
 			url = lastApi.getEventsByArtist(
 					keyword,
 					new Integer(request.getAttributes().get("count").toString()));
-			typeQuery = Query.Types.SEARCH_BY_ARTIST;
+			typeQuery = QueryEvent.Types.SEARCH_BY_ARTIST;
 			break;
 		case LOCATION:
 			url = lastApi.getEventsByLocation(
 					keyword,
 					DEFAULT_DISTANCE,
 					DEFAULT_COUNT);
-			typeQuery = Query.Types.SEARCH_BY_LOCATION;
+			typeQuery = QueryEvent.Types.SEARCH_BY_LOCATION;
 			break;
 		case LOCATION_WITH_DISTANCE:
 			url = lastApi.getEventsByLocation(
 					keyword,
 					new Integer(request.getAttributes().get("distance").toString()),
 					DEFAULT_COUNT);
-			typeQuery = Query.Types.SEARCH_BY_LOCATION;
+			typeQuery = QueryEvent.Types.SEARCH_BY_LOCATION;
 			break;
 		case LOCATION_WITH_DISTANCE_AND_COUNT:
 			url = lastApi.getEventsByLocation(
 					keyword,
 					new Integer(request.getAttributes().get("distance").toString()),
 					new Integer(request.getAttributes().get("count").toString()));
-			typeQuery = Query.Types.SEARCH_BY_LOCATION;
+			typeQuery = QueryEvent.Types.SEARCH_BY_LOCATION;
 			break;
 		case SEARCH_ARTIST:
 			url = lastApi.getArtists(keyword, DEFAULT_COUNT_SEARCH);
@@ -112,7 +112,7 @@ public class Resource extends Restlet {
 			}
 		}
 		else {
-			Query query = new Query();
+			QueryEvent query = new QueryEvent();
 			res = Parser.loadEvents(keyword, url, query, typeQuery);
 			if(res == null) {
 				message = query.getJSONResult();

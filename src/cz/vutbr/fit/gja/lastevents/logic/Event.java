@@ -3,27 +3,51 @@ package cz.vutbr.fit.gja.lastevents.logic;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import com.google.appengine.api.datastore.Key;
 
 /**
  * Data class represents one last-event. 
  */
+@PersistenceCapable
 public class Event 
 {
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key key;
+	
+	@Persistent
 	private int id;
+	@Persistent
 	private String title;	
+	@Persistent
 	private String url;	
+	@Persistent
 	private String image;
+	@Persistent
 	private Date date;
 		
+	@Persistent
 	private String venueName;
+	@Persistent
 	private String venueCity;
+	@Persistent
 	private String venueCountry;
+	@Persistent
 	private double venueLat; // optional
+	@Persistent
 	private double venueLon; // optional
 	
+	@Persistent
 	private ArrayList<String> artists;
+	@Persistent
 	private ArrayList<String> tags; // optional
 	
 	
@@ -41,6 +65,23 @@ public class Event
 		
 		this.artists = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
+	}
+	
+	
+	public Event(Event copy) 
+	{    
+	    this.id = copy.id;
+		this.title = copy.title;	
+		this.url = copy.url;	
+		this.image = copy.image;
+		this.date = copy.date;			
+		this.venueName = copy.venueName;
+		this.venueCity = copy.venueCity;
+		this.venueCountry = copy.venueCountry;
+		this.venueLat = copy.venueLat;
+		this.venueLon = copy.venueLon;
+		this.artists = copy.artists;
+		this.tags = copy.tags;
 	}
 	
 	
@@ -164,6 +205,7 @@ public class Event
 	}
 	
 	
+	public Key getKey() { return this.key; }
 	public int getId() { return this.id; }
 	public String getTitle() { return this.title; }	
 	public String getUrl() { return this.url; }	

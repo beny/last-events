@@ -2,11 +2,10 @@ package cz.vutbr.fit.gja.lastevents.logic;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
-import javax.jdo.PersistenceManager;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -14,8 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import cz.vutbr.fit.gja.lastevents.storage.PMF;
-import cz.vutbr.fit.gja.lastevents.storage.QueryStore;
+import cz.vutbr.fit.gja.lastevents.storage.Storage;
 
 /**
  * Parser for Last.fm data.
@@ -151,7 +149,7 @@ public class Parser
 	 * @param type type of query
 	 * @return error message
 	 */
-	public static String parseEvents(String queryUrl, Query output, Query.Types type)
+	public static String parseEvents(String queryUrl, QueryEvent output, QueryEvent.Types type)
 	{
 		//http://www.java-tips.org/java-se-tips/javax.xml.parsers/how-to-read-xml-file-in-java.html
 
@@ -180,12 +178,12 @@ public class Parser
 			NodeList eventsList = doc.getElementsByTagName("events");
 		    Element eventsElement = (Element) eventsList.item(0);
 		    String keyword;
-		    if(type == Query.Types.SEARCH_BY_LOCATION)
+		    if(type == QueryEvent.Types.SEARCH_BY_LOCATION)
 		    {
 		    	keyword = eventsElement.getAttribute("location");
 			    ////System.out.println("LOCATION: " + keyword);
 		    }
-		    else if(type == Query.Types.SEARCH_BY_ARTIST)
+		    else if(type == QueryEvent.Types.SEARCH_BY_ARTIST)
 		    {
 		    	keyword = eventsElement.getAttribute("artist");
 			    ////System.out.println("ARTIST: " + keyword);
@@ -314,7 +312,7 @@ public class Parser
 		    	catch (Exception e) {}
 
 		    	// add event to query
-		    	output.addArtist(event);
+		    	output.addEvent(event);
 		    }
 		}
 		catch (Exception e)
@@ -453,63 +451,68 @@ public class Parser
 	 * @param type type of query
 	 * @return error message
 	 */
-	public static String loadEvents(String keyword, String queryUrl, Query output, Query.Types type)
+	public static String loadEvents(String keyword, String queryUrl, QueryEvent output, QueryEvent.Types type)
 	{
-		// TODO zkontroluj storage zda je tam hledany zaznam		
-		// TODO pokud je, zkontroluj timeout
-		// TODO		pokud je v poradku, vrat zaznam ze storage
-		// TODO		jinak nacti data z XML a aktualizuj ve storage
-		// TODO jinak nacti data z XML a uloz do storage		
-		
-		String err;
-		err = parseEvents(queryUrl, output, type);		
-		
-		
-//		System.out.println("STORAGE TEST");
-//		PersistenceManager pm;
-		
+		String err = parseEvents(queryUrl, output, type);
+		return err;		
 
-//		// ukladani do databaze
-//		Date date = new Date();
-//		//QueryStore data1 = new QueryStore("Wohnouti", 0, date);
-//		QueryStore data2 = new QueryStore("Ewa", 0, date);
-//		QueryStore data3 = new QueryStore("Iron Maiden", 0, date);
-//		QueryStore data4 = new QueryStore("Brno", 1, date);
+//		// Pseudokod:
+//		// - zkontroluj storage zda je tam hledany zaznam		
+//		// - pokud je, zkontroluj timeout
+//		// -		pokud je v poradku, vrat zaznam ze storage
+//		// -		jinak nacti data z XML a aktualizuj ve storage
+//		// - jinak nacti data z XML a uloz do storage	
 //		
-//		pm = PMF.get().getPersistenceManager();
-//        try 
-//        {
-//            //pm.makePersistent(data1);
-//            pm.makePersistent(data2);
-//            pm.makePersistent(data3);
-//            pm.makePersistent(data4);
-//            System.out.println("ukladam data do storage...");
-//        } 
-//        finally 
-//        {
-//            pm.close();
-//        }
-
-        
-		
-//		// nacteni dat ze storage
-//        pm = PMF.get().getPersistenceManager();
-//        String query = "select from " + QueryStore.class.getName();
-//        List<QueryStore> data = (List<QueryStore>) pm.newQuery(query).execute();
-//        if(!data.isEmpty())
-//        {
-//        	QueryStore s;
-//        	for(int i=0;i<data.size();i++)
-//        	{
-//        		s = data.get(i);
-//        		System.out.println("STORAGE: " + s.getKeyword() + "|" + s.getType() + "|" + s.getDate());
-//        	}
-//        }
-//        pm.close();
-		
-        
-        
-        
-		return err;
+//		
+//		// TODO dukladne zkontrolovat funkcnost Storage!!! http://localhost:8888/api/artist/Madonna/5
+//		// TODO unit testy
+//		// TODO zakomentovat println
+//		// TODO zohlednovat v cache i limit a distance
+//		
+//		// create storage object
+//		QueryEvent storageQuery;
+//		String err = null;
+//		
+//		// try load data from storage
+//		// TODO opravit chybu - storageQuery vraci vzdy prazdny seznam eventu ackoliv ve storage je neprazdny!!!
+//		storageQuery = Storage.loadData(keyword);
+//				
+//		// data is in cache
+//		if(storageQuery!=null)
+//		{
+//			Storage.debugInfo(storageQuery, "LOAD");
+//			
+//			// check timeout			
+//			boolean timeout = Storage.checkTimeout(storageQuery.getDate());
+//			
+//			// fresh data is in storage
+//			if(!timeout) 
+//			{
+//				output.setQuery(storageQuery.getKeyword(), storageQuery.getType());
+//				for(int i = 0;i < storageQuery.getEvents().size();i++)
+//				{
+//					output.addEvent(new Event(storageQuery.getEvents().get(i)));
+//					System.out.println("cykl");
+//				}
+//				
+//				Storage.debugInfo(output, "FROM CACHE");
+//				return err;
+//			}
+//			// old data is in storage
+//			else
+//			{
+//				err = parseEvents(queryUrl, output, type);
+//				if(err==null) Storage.updateData(storageQuery.getKey(), output.getEvents());
+//				return err;
+//			}			
+//		}
+//		// data is not in cache
+//		else
+//		{
+//			err = parseEvents(queryUrl, output, type);
+//			if(err==null) Storage.storeData(output);
+//			return err;
+//		}
+	
 	}
 }

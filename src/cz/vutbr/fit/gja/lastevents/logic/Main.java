@@ -21,11 +21,11 @@ public class Main
 		System.out.println(url1);
 		System.out.println(url2);
 
-		Query query1 = new Query();
-		Query query2 = new Query();
+		QueryEvent query1 = new QueryEvent();
+		QueryEvent query2 = new QueryEvent();
 		
-		String res1 = Parser.parseEvents(url1, query1, Query.Types.SEARCH_BY_LOCATION);
-		String res2 = Parser.parseEvents(url2, query2, Query.Types.SEARCH_BY_ARTIST);
+		String res1 = Parser.parseEvents(url1, query1, QueryEvent.Types.SEARCH_BY_LOCATION);
+		String res2 = Parser.parseEvents(url2, query2, QueryEvent.Types.SEARCH_BY_ARTIST);
 		
 		if(res1 == "") query1.printQuery();
 		if(res2 == "") query2.printQuery();

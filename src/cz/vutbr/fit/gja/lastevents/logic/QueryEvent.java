@@ -3,16 +3,32 @@ package cz.vutbr.fit.gja.lastevents.logic;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.google.appengine.api.datastore.Key;
+
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
+
 import org.json.simple.JSONArray;
 
 /**
  * Data class represents one search query.
  */
-public class Query
+@PersistenceCapable
+public class QueryEvent
 {
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key key;
+	
+	@Persistent
 	private String keyword;
-	private Query.Types type;
+	@Persistent
+	private QueryEvent.Types type;
+	@Persistent
 	private Date date;
+	@Persistent
 	private ArrayList<Event> events;
 
 	public enum Types { SEARCH_BY_ARTIST, SEARCH_BY_LOCATION };
@@ -21,7 +37,7 @@ public class Query
 	/**
 	 * Create query.
 	 */
-	public Query()
+	public QueryEvent()
 	{
 		this.date = new Date();
 		this.events = new ArrayList<Event>();
@@ -31,7 +47,7 @@ public class Query
 	/**
 	 * Create query.
 	 */
-	public Query(String keyword, Query.Types type)
+	public QueryEvent(String keyword, QueryEvent.Types type)
 	{
 		this.keyword = keyword;
 		this.type = type;
@@ -44,7 +60,7 @@ public class Query
 	/**
 	 * Set query.
 	 */
-	public void setQuery(String keyword, Query.Types type)
+	public void setQuery(String keyword, QueryEvent.Types type)
 	{
 		this.keyword = keyword;
 		this.type = type;
@@ -54,7 +70,7 @@ public class Query
 	/**
 	 * Add event to query.
 	 */
-	public void addArtist(Event event)
+	public void addEvent(Event event)
 	{
 		this.events.add(event);
 	}
@@ -92,8 +108,12 @@ public class Query
 
 	}
 
+	public Key getKey() { return this.key; }
 	public String getKeyword() { return this.keyword; }
-	public Query.Types getType() { return this.type; }
+	public QueryEvent.Types getType() { return this.type; }
 	public Date getDate() { return this.date; }
 	public ArrayList<Event> getEvents() { return this.events; }
+	
+	public void setDate(Date date) { this.date = date; }
+	public void setEvents(ArrayList<Event> events) { this.events = events; }
 }
