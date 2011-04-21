@@ -139,6 +139,31 @@ public class Parser
 
 		return url;
 	}
+	
+	
+	/**
+	 * Get URL of method which search tags by a keyword.
+	 * Using api.last.fm.
+	 *
+	 * @param tag the tag name for match
+	 * @param limit the number of tags
+	 * @return URL address to XML data
+	 */
+	public String getTags(String tag, int limit)
+	{
+		/*
+		 	limit (Optional) : The number of results to fetch per page. Defaults to 30.
+			page (Optional) : The page number to fetch. Defaults to first page.
+			tag (Required) : The tag name
+			api_key (Required) : A Last.fm API key.
+		*/
+		
+		String url = "http://ws.audioscrobbler.com/2.0/?method=tag.search&tag=" + tag +
+			"&limit=" + limit +
+			"&api_key=" + apiKey;
+
+		return url;
+	}
 
 
 	/**
@@ -441,6 +466,73 @@ public class Parser
 		return null;
 	}
 	
+	
+	/**
+	 * Parse Last.fm tags.
+	 *
+	 * @param queryUrl url address of Last.fm XML file
+	 * @param output save parsed data to QueryTag object
+	 * @return error message
+	 */
+	public static String loadTags(String queryUrl, QueryTag output)
+	{
+		//http://www.java-tips.org/java-se-tips/javax.xml.parsers/how-to-read-xml-file-in-java.html
+
+		try
+		{
+			// inicialization of XML parser
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(queryUrl);
+			doc.getDocumentElement().normalize();
+
+			// check error
+			NodeList lfmList = doc.getElementsByTagName("lfm");
+		    Element lfmElement = (Element) lfmList.item(0);
+		    String status = lfmElement.getAttribute("status");
+		    ////System.out.println("STATUS: " + status);
+		    if(status.compareTo("failed") == 0)
+		    {
+		    	Element errorElement = (Element) lfmElement.getElementsByTagName("error").item(0);
+		    	String error = errorElement.getTextContent();
+		    	////System.out.println("ERROR: " + error);
+		    	return error;
+		    }
+
+		    // results node
+			NodeList resultsList = doc.getElementsByTagName("results");
+		    Element resultsElement = (Element) resultsList.item(0);
+		    String keyword = resultsElement.getAttribute("for");
+		    ////System.out.println("KEYWORD: " + keyword);
+
+		    // create query object
+		    output.setKeyword(keyword);
+		    
+		    // artist nodes
+		    NodeList tagList = doc.getElementsByTagName("tag");
+		    for (int i = 0; i < tagList.getLength(); i++)
+		    {
+		    	////System.out.println("-----------------------------------------");
+		    	Element tagElement = (Element) tagList.item(i);
+
+		    	// name node
+		    	Element nameElement = (Element) tagElement.getElementsByTagName("name").item(0);
+		    	String name = nameElement.getTextContent();
+		    	////System.out.println("TAG #" + i + " NAME: " + name);
+		    	
+		    	output.addName(name);
+		    }
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			////System.out.println("EXCEPTION: " + e.toString());
+			return e.toString();
+		}
+
+		return null;
+	}
+	
 
 	/**
 	 * Load Last.fm events from storage or XML.
@@ -461,7 +553,6 @@ public class Parser
 		// - jinak nacti data z XML a uloz do storage	
 				
 		// TODO unit testy
-		// TODO zakomentovat println
 		// TODO zohlednovat v cache i limit a distance
 		
 		// create storage object
@@ -474,7 +565,7 @@ public class Parser
 		// data is in cache
 		if(storageQuery!=null)
 		{
-			Storage.debugInfo(storageQuery, "LOAD");
+			////Storage.debugInfo(storageQuery, "LOAD");
 			
 			// check timeout			
 			boolean timeout = Storage.checkTimeout(storageQuery.getDate());
@@ -509,7 +600,7 @@ public class Parser
         			output.addEvent(e);					
 				}
 				
-				Storage.debugInfo(output, "FROM CACHE");
+				////Storage.debugInfo(output, "FROM CACHE");
 				return err;
 			}
 			// old data is in storage

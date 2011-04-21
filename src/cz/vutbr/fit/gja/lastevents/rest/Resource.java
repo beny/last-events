@@ -9,6 +9,7 @@ import cz.vutbr.fit.gja.lastevents.logic.Parser;
 import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
 import cz.vutbr.fit.gja.lastevents.logic.QueryArtist;
 import cz.vutbr.fit.gja.lastevents.logic.QueryLocation;
+import cz.vutbr.fit.gja.lastevents.logic.QueryTag;
 
 /**
  * Trida reprezentujici zdroj dat podle typu aplikovane routy
@@ -18,7 +19,7 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryLocation;
 public class Resource extends Restlet {
 
 	public static enum Type {ARTIST, ARTIST_WITH_COUNT, LOCATION, LOCATION_WITH_DISTANCE, LOCATION_WITH_DISTANCE_AND_COUNT,
-		SEARCH_ARTIST, SEARCH_ARTIST_WITH_COUNTS, SEARCH_LOCATION, SEARCH_LOCATION_WITH_COUNTS};
+		SEARCH_ARTIST, SEARCH_ARTIST_WITH_COUNTS, SEARCH_LOCATION, SEARCH_LOCATION_WITH_COUNTS, SEARCH_TAG, SEARCH_TAG_WITH_COUNTS};
 	public final static int DEFAULT_DISTANCE = 10;
 	public final static int DEFAULT_COUNT = 5;
 	public final static int DEFAULT_COUNT_SEARCH = 5; // pro naseptavac
@@ -88,6 +89,13 @@ public class Resource extends Restlet {
 			url = lastApi.getLocations(keyword,
 					new Integer(request.getAttributes().get("count").toString()));
 			break;
+		case SEARCH_TAG:
+			url = lastApi.getTags(keyword, DEFAULT_COUNT_SEARCH);
+			break;
+		case SEARCH_TAG_WITH_COUNTS:
+			url = lastApi.getTags(keyword,
+					new Integer(request.getAttributes().get("count").toString()));
+			break;
 		default:
 			break;
 		}
@@ -108,6 +116,14 @@ public class Resource extends Restlet {
 			res = Parser.loadLocations(keyword, url, queryLocation);
 			if(res == null) {
 				message = queryLocation.getJSONResult();
+				response.setEntity(message, MediaType.TEXT_PLAIN);
+			}
+		}
+		else if(type == Type.SEARCH_TAG || type == Type.SEARCH_TAG_WITH_COUNTS){
+			QueryTag queryTag = new QueryTag();
+			res = Parser.loadTags(url, queryTag);
+			if(res == null) {
+				message = queryTag.getJSONResult();
 				response.setEntity(message, MediaType.TEXT_PLAIN);
 			}
 		}

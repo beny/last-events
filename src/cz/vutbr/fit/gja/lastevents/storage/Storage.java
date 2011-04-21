@@ -26,7 +26,7 @@ public class Storage
         {
             pm.makePersistent(data);
 
-            debugInfo(data, "STORE");
+            ////debugInfo(data, "STORE");
         }
         finally 
 		{
@@ -57,7 +57,7 @@ public class Storage
         	{
         		result = (QueryEvent) resultList.get(0);
 
-        		debugInfo(result, "DELETE");
+        		////debugInfo(result, "DELETE");
         		
         		pm.deletePersistent(result);
         	}
