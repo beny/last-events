@@ -2,7 +2,6 @@ package cz.vutbr.fit.gja.lastevents.logic;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -174,7 +173,7 @@ public class Parser
 	 * @param type type of query
 	 * @return error message
 	 */
-	public static String parseEvents(String queryUrl, QueryEvent output, QueryEvent.Types type)
+	public static String parseEvents(int distance, int limit, String queryUrl, QueryEvent output, QueryEvent.Types type)
 	{
 		//http://www.java-tips.org/java-se-tips/javax.xml.parsers/how-to-read-xml-file-in-java.html
 
@@ -206,6 +205,7 @@ public class Parser
 		    if(type == QueryEvent.Types.SEARCH_BY_LOCATION)
 		    {
 		    	keyword = eventsElement.getAttribute("location");
+		    	keyword = keyword.replaceAll(",.*", "");
 			    ////System.out.println("LOCATION: " + keyword);
 		    }
 		    else if(type == QueryEvent.Types.SEARCH_BY_ARTIST)
@@ -219,7 +219,7 @@ public class Parser
 		    }
 
 		    // create query object
-		    output.setQuery(keyword, type);
+		    output.setQuery(keyword, distance, limit, type);
 
 		    // event nodes
 		    NodeList eventList = doc.getElementsByTagName("event");
@@ -543,24 +543,21 @@ public class Parser
 	 * @param type type of query
 	 * @return error message
 	 */
-	public static String loadEvents(String keyword, String queryUrl, QueryEvent output, QueryEvent.Types type)
+	public static String loadEvents(String keyword, int distance, int limit, String queryUrl, QueryEvent output, QueryEvent.Types type)
 	{	
 		// Pseudokod:
 		// - zkontroluj storage zda je tam hledany zaznam		
 		// - pokud je, zkontroluj timeout
 		// -		pokud je v poradku, vrat zaznam ze storage
 		// -		jinak nacti data z XML a aktualizuj ve storage
-		// - jinak nacti data z XML a uloz do storage	
-				
-		// TODO unit testy
-		// TODO zohlednovat v cache i limit a distance
+		// - jinak nacti data z XML a uloz do storage					
 		
 		// create storage object
 		QueryEvent storageQuery;
 		String err = null;
 		
 		// try load data from storage
-		storageQuery = Storage.loadData(keyword);
+		storageQuery = Storage.loadData(keyword, distance, limit);
 		
 		// data is in cache
 		if(storageQuery!=null)
@@ -574,7 +571,10 @@ public class Parser
 			if(!timeout) 
 			{
 				// copy query object
-				output.setQuery(storageQuery.getKeyword(), storageQuery.getType());
+				output.setQuery(storageQuery.getKeyword(), 
+						storageQuery.getDistance(), 
+						storageQuery.getLimit(), 
+						storageQuery.getType());
 				output.setDate(storageQuery.getDate());
         		for(int i = 0;i < storageQuery.getEvents().size();i++)
 				{
@@ -606,10 +606,10 @@ public class Parser
 			// old data is in storage
 			else
 			{
-				err = parseEvents(queryUrl, output, type);
+				err = parseEvents(distance, limit, queryUrl, output, type);
 				if(err==null) 
 				{
-					Storage.deleteData(storageQuery.getKeyword());
+					Storage.deleteData(storageQuery.getKeyword(), storageQuery.getDistance(), storageQuery.getLimit());
 					Storage.storeData(output);
 				}
 				return err;
@@ -618,7 +618,7 @@ public class Parser
 		// data is not in cache
 		else
 		{
-			err = parseEvents(queryUrl, output, type);
+			err = parseEvents(distance, limit, queryUrl, output, type);
 			if(err==null) Storage.storeData(output);
 			return err;
 		}

@@ -39,6 +39,8 @@ public class Resource extends Restlet {
 		String message = new String();
 		String url = new String();
 		String keyword = (String) request.getAttributes().get("query");
+		int count = DEFAULT_COUNT;
+		int distance = DEFAULT_DISTANCE;
 		QueryEvent.Types typeQuery = QueryEvent.Types.SEARCH_BY_ARTIST;
 
 		switch (type) {
@@ -53,6 +55,7 @@ public class Resource extends Restlet {
 					keyword,
 					new Integer(request.getAttributes().get("count").toString()));
 			typeQuery = QueryEvent.Types.SEARCH_BY_ARTIST;
+			count = Integer.parseInt((String) request.getAttributes().get("count"));
 			break;
 		case LOCATION:
 			url = lastApi.getEventsByLocation(
@@ -67,6 +70,7 @@ public class Resource extends Restlet {
 					new Integer(request.getAttributes().get("distance").toString()),
 					DEFAULT_COUNT);
 			typeQuery = QueryEvent.Types.SEARCH_BY_LOCATION;
+			distance = Integer.parseInt((String) request.getAttributes().get("distance"));
 			break;
 		case LOCATION_WITH_DISTANCE_AND_COUNT:
 			url = lastApi.getEventsByLocation(
@@ -74,6 +78,8 @@ public class Resource extends Restlet {
 					new Integer(request.getAttributes().get("distance").toString()),
 					new Integer(request.getAttributes().get("count").toString()));
 			typeQuery = QueryEvent.Types.SEARCH_BY_LOCATION;
+			distance = Integer.parseInt((String) request.getAttributes().get("distance"));
+			count = Integer.parseInt((String) request.getAttributes().get("count"));
 			break;
 		case SEARCH_ARTIST:
 			url = lastApi.getArtists(keyword, DEFAULT_COUNT_SEARCH);
@@ -129,7 +135,7 @@ public class Resource extends Restlet {
 		}
 		else {
 			QueryEvent query = new QueryEvent();
-			res = Parser.loadEvents(keyword, url, query, typeQuery);
+			res = Parser.loadEvents(keyword, distance, count, url, query, typeQuery);
 			if(res == null) {
 				message = query.getJSONResult();
 				response.setEntity(message, MediaType.TEXT_PLAIN);

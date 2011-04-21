@@ -15,6 +15,7 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
 public class Storage 
 {
 	public static final long TIMEOUT_INTERVAL = 24 * 3600000; // in millisecond: x * hours
+
 	
 	/**
 	 * Store object into the database.
@@ -39,7 +40,7 @@ public class Storage
 	 * Delete object from the database.
 	 */
 	@SuppressWarnings("unchecked")
-	public static void deleteData(String keyword)
+	public static void deleteData(String keyword, int distance, int limit)
 	{
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 
@@ -48,11 +49,13 @@ public class Storage
 		Query query = pm.newQuery(QueryEvent.class);
         try
         {           
-	        query.setFilter("keyword == keywordParam");	
-	        query.declareParameters("String keywordParam");
+        	query.setFilter("keyword == keywordParam && " +
+	        		"distance == distanceParam && " +
+	        		"limit == limitParam");	
+	        query.declareParameters("String keywordParam, int distanceParam, int limitParam");
 	        query.setRange(0, 1);
 
-	        resultList = (List<QueryEvent>) query.execute(keyword);
+	        resultList = (List<QueryEvent>) query.execute(keyword, distance, limit);
 	        if(resultList.size()==1) 
         	{
         		result = (QueryEvent) resultList.get(0);
@@ -74,7 +77,7 @@ public class Storage
 	 * Load object from database.
 	 */
 	@SuppressWarnings("unchecked")
-	public static QueryEvent loadData(String keyword)
+	public static QueryEvent loadData(String keyword, int distance, int limit)
 	{
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<QueryEvent> resultList = null;
@@ -83,18 +86,23 @@ public class Storage
 		Query query = pm.newQuery(QueryEvent.class);
         try
         {           
-	        query.setFilter("keyword == keywordParam");	
-	        query.declareParameters("String keywordParam");
+	        query.setFilter("keyword == keywordParam && " +
+	        		"distance == distanceParam && " +
+	        		"limit == limitParam");	
+	        query.declareParameters("String keywordParam, int distanceParam, int limitParam");
 	        query.setRange(0, 1);
 	        //query.setOrdering("date desc");
 
-	        resultList = (List<QueryEvent>) query.execute(keyword);
+	        resultList = (List<QueryEvent>) query.execute(keyword, distance, limit);
 	        if(resultList.size()==1) 
         	{
         		result = (QueryEvent) resultList.get(0);
 
         		// copy query object
-        		resultReturn = new QueryEvent(result.getKeyword(), result.getType());
+        		resultReturn = new QueryEvent(result.getKeyword(), 
+        				result.getDistance(), 
+        				result.getLimit(), 
+        				result.getType());
         		resultReturn.setKey(result.getKey());
         		resultReturn.setDate(result.getDate());
         		for(int i = 0;i < result.getEvents().size();i++)
@@ -145,6 +153,6 @@ public class Storage
 	
 	public static void debugInfo(QueryEvent query, String label)
 	{
-		System.out.println(label + ": " + query.getKeyword() + "|" + query.getType() + "|" + query.getDate() + "|" + query.getEvents().size());
+		System.out.println(label + ": " + query.getKeyword() + "|" + query.getDistance() + "|" + query.getLimit() + "|" + query.getType() + "|" + query.getDate() + "|" + query.getEvents().size());
 	}
 }
