@@ -49,7 +49,8 @@ $(document).ready(function(){
 		markers = [];
 		
 		// vycisteni seznamu s vysledky
-		$("#events").empty();
+		$("#events-artist").empty();
+		$("#events-location").empty();
 	}
 
 	// vyhledavani bodu podle id eventu
@@ -61,7 +62,7 @@ $(document).ready(function(){
 	}
 
 	// autocomplete
-	$("#q").autocomplete({
+	$("#artist-search").autocomplete({
 	  open: function(event, ui) { 
 	    $(".ui-slider-handle").css("z-index", -1); 
 	  },
@@ -119,7 +120,7 @@ $(document).ready(function(){
 					}));
 
 					// seznam eventu v liste
-					$("#events").append(
+					$("#events-artist").append(
 					  '<li><a id="event'+id+'" href="#" title="'+title+'"><span class="calSheet calSheetSmall"><span class="month">'+month[date.getMonth()]+'</span><span class="day">'+date.getDate()+'</span></span><strong class="summary">'+title+'</strong></a><small class="location adr">'+venue+', '+city+', '+country+'</small></li>'
 					  )
           $("event"+id).click(function(){
@@ -144,6 +145,81 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("#location-search").autocomplete({
+	  open: function(event, ui) { 
+	    $(".ui-slider-handle").css("z-index", -1); 
+	  },
+    close: function(event, ui) { 
+      $(".ui-slider-handle").css("z-index", 2); 
+    },
+		source: function(request, response) {
+			$.ajax({
+				url: "api/search/location/"+request.term,//request url
+				dataType: "json",
+				success: function(data) {
+					response($.map(data, function(item) {
+						return {
+							label: item,
+							value: item
+						}
+					}))
+				}
+			})
+		},
+		select: function( event, ui ) {
+
+			// vycisteni mapy
+			clearOverlays();
+
+			$.getJSON("/api/location/"+ui.item.value+"/"+parseInt($("#place-distance").html())+"/"+parseInt($("#place-count").html()), function (data){
+				
+				// TODO pokud jsou data prazdna nehybej s mapou a nedelej jine veci
+				// pokud existuji nejaka data	
+				
+				for(i in data){
+					var title = data[i].title;
+
+					var lat = data[i].venue.lat;
+					var lon = data[i].venue.lon;
+					var id = data[i].id;
+					var date = new Date(data[i].date);
+					var city = data[i].venue.city;
+					var venue = data[i].venue.name;
+					var country = data[i].venue.country;
+
+					// preskoc pokud nejsou zadany souradnice
+					if(lat == 0 && lon == 0) continue;
+
+					// pridani bodu do mapy a vsech pomocnych poli
+					var p = new google.maps.LatLng(lat, lon);
+					points.push(p);
+					pathPoints.push(p);
+					bounds.extend(p);
+					markers.push(new google.maps.Marker({
+						position: p,
+						map: map,
+						icon: image,
+						id: id
+					}));
+
+					// seznam eventu v liste
+					$("#events-location").append(
+					  '<li><a id="event'+id+'" href="#" title="'+title+'"><span class="calSheet calSheetSmall"><span class="month">'+month[date.getMonth()]+'</span><span class="day">'+date.getDate()+'</span></span><strong class="summary">'+title+'</strong></a><small class="location adr">'+venue+', '+city+', '+country+'</small></li>'
+					  )
+          $("event"+id).click(function(){
+            map.panTo(convertIdToCoordinates($(this).attr("id")));
+          });
+				}
+
+				// zacentrovani na body
+				map.fitBounds(bounds);
+
+			});
+			return false;
+		}
+	});
+  
+	
 	// inicializace akordeonu
   $("#accordion").accordion({
     icons: false,
@@ -166,16 +242,29 @@ $(document).ready(function(){
     }
   });
   $("#artist-day").html($("#slider-artist-day").slider("value"));
+  
 
   $("#slider-place-distance").slider({
     range: "min",
     value: 10,
-    min: 1,
-    max: 1000,
+    min: 0,
+    step: 5,
+    max: 500,
     slide: function( event, ui ) {
       $("#place-distance").html(ui.value);
     }
   });
   $("#place-distance").html($("#slider-place-distance").slider("value"));
+  
+  $("#slider-place-count").slider({
+    range: "min",
+    value: 10,
+    min: 1,
+    max: 100,
+    slide: function( event, ui ) {
+      $("#place-count").html(ui.value);
+    }
+  });
+  $("#place-count").html($("#slider-place-count").slider("value"));
   
 });
