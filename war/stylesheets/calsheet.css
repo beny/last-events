@@ -1,0 +1,114 @@
+/* calSheet */
+
+span.calSheet {
+    display: block;
+    text-align: center;
+}
+
+span.calSheet span {
+    display: block;
+    float: left;
+    width: 100%;
+}
+
+span.calSheet span.month {
+    background: #D51007;
+    border: 1px solid #D51007;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1.1em;
+    font-weight: bold;
+    text-align: center;
+}
+
+span.calSheet span.day {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    color: #000;
+    line-height: 1.4em;
+    font-weight: bold;
+    letter-spacing: -0.1em;
+}
+
+/* calSheetSmall */
+
+span.calSheetSmall {
+    width: 25px;
+}
+
+span.calSheetSmall span.month {
+    height: 10px;
+    font-size: 9px;
+}
+
+span.calSheetSmall span.day {
+    font-size: 14px;
+}
+
+/* small */
+
+
+ul.eventsSmall span.calSheet {
+    float: left;
+    display: inline;
+    margin-left: -37px;
+}
+
+ul.eventsSmall li {
+    zoom: 1;
+    padding: 5px 5px 5px 0px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ccc;
+    font-size: 11px;
+    line-height: 1.181818em;
+    list-style-type: none;
+}
+
+ul.eventsSmall li.first {
+    border-top: 0;
+    margin-top: -15px;
+}
+ul.eventsSmall li.last {
+    border-bottom: 0;
+}
+
+ul.eventsSmall a {
+    text-decoration: none;
+}
+
+ul.eventsSmall li strong.summary {
+    display: block;
+    font-size: 11px;
+    line-height: 1.181818em;
+    color: #000;
+    font-weight: bold;
+}
+ul.eventsSmall a:hover strong.summary,
+ul.eventsSmall a:hover span.summary {
+    color: #0187c5;
+    text-decoration: underline;
+}
+
+ul.eventsSmall li small.location {
+    display: block;
+    color: #000;
+    font-size: 11px;
+    margin: 1px 0 4px 0;
+}
+
+ul.eventsSmall li p.info {
+    font-size: 10px;
+    color: #696969;
+}
+
+ul.eventsSmall a.comments:hover {
+    text-decoration: underline;
+}
+
+ul.eventsSmall li.past span.calSheet {
+  filter: alpha(opacity=60);
+  -moz-opacity: 0.6;
+    opacity: 0.6;
+}
+

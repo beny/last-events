@@ -20,7 +20,7 @@ body {
 }
 
 #sidebar p {
-  font-size: 12px;
+/*  font-size: 12px;*/
   
 }
 
@@ -37,62 +37,25 @@ body {
   margin: 0px;
 }
 
-#sidebar hr {
-  width: 90%;
-}
 
 /* search form */
 form#search {
-  padding: 5px;
+/*  padding: 5px;*/
   text-align: center;
+}
+
+#search {
+  text-align: center;
+}
+
+.slider {
+  margin: 10px 5px 10px 5px;
+  
 }
 
 
 /* event */
 .event {
-  font-size: 12px;
+/*  font-size: 12px;*/
   padding: 0 0 10px 5px;
-}
-
-/* mini calendar sheet */
-span.calendar {
-  border: 1px solid #696969;
-}
-
-span.month {
-  background: #D51007;
-  padding: 1px;
-  color: white;
-  text-transform: uppercase;
-  font-weight: bold;
-  text-align: center;
-}
-
-span.mapit {
-  font-size: 9px;
-  color: blue;
-}
-
-span.mapit:hover {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-span.info {
-  font-size: 9px;
-  color: blue;
-}
-
-span.info:hover {
-  cursor: pointer;
-  text-decoration: underline;
-}
-
-span.day {
-  font-weight: bold;
-  padding-right: 2px;
-}
-
-.event span.title {
-  padding-left: 5px;
 }

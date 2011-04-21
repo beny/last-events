@@ -1,5 +1,22 @@
-//inicializace mapy
 $(document).ready(function(){ 
+
+  // inicializace pomocnych promennych
+  var d=new Date();
+  var month=new Array(12);
+  month[0]="Jan";
+  month[1]="Feb";
+  month[2]="Mar";
+  month[3]="Apr";
+  month[4]="May";
+  month[5]="Jun";
+  month[6]="Jul";
+  month[7]="Aug";
+  month[8]="Sep";
+  month[9]="Oct";
+  month[10]="Nov";
+  month[11]="Dec";
+
+  // inicializace mapy
 	var myLatlng = new google.maps.LatLng(43.6, 0.7);
 	var myOptions = {
 			zoom: 2,
@@ -30,6 +47,9 @@ $(document).ready(function(){
 			}
 		}
 		markers = [];
+		
+		// vycisteni seznamu s vysledky
+		$("#events").empty();
 	}
 
 	// vyhledavani bodu podle id eventu
@@ -42,6 +62,12 @@ $(document).ready(function(){
 
 	// autocomplete
 	$("#q").autocomplete({
+	  open: function(event, ui) { 
+	    $(".ui-slider-handle").css("z-index", -1); 
+	  },
+    close: function(event, ui) { 
+      $(".ui-slider-handle").css("z-index", 2); 
+    },
 		source: function(request, response) {
 			$.ajax({
 				url: "api/search/artist/"+request.term,//request url
@@ -58,18 +84,15 @@ $(document).ready(function(){
 		},
 		select: function( event, ui ) {
 
-			// vycisteni seznamu s vysledky
-			$("#events").empty();
-
 			// vycisteni mapy
 			clearOverlays();
 
-			$.getJSON("/api/artist/"+ui.item.value, function (data){
+			$.getJSON("/api/artist/"+ui.item.value+"/"+parseInt($("#artist-day").html()), function (data){
 				
 				// TODO pokud jsou data prazdna nehybej s mapou a nedelej jine veci
 				// pokud existuji nejaka data	
+				
 				for(i in data){
-
 					var title = data[i].title;
 
 					var lat = data[i].venue.lat;
@@ -77,6 +100,8 @@ $(document).ready(function(){
 					var id = data[i].id;
 					var date = new Date(data[i].date);
 					var city = data[i].venue.city;
+					var venue = data[i].venue.name;
+					var country = data[i].venue.country;
 
 					// preskoc pokud nejsou zadany souradnice
 					if(lat == 0 && lon == 0) continue;
@@ -94,11 +119,12 @@ $(document).ready(function(){
 					}));
 
 					// seznam eventu v liste
-					$("#events").append("<p id=\"event"+ id +"\">" + date.toDateString() + " - " +
-							title + " @ " + city + "</p>")
-					$("#event"+id).click(function (){
-						map.panTo(convertIdToCoordinates($(this).attr("id")));
-					});
+					$("#events").append(
+					  '<li><a id="event'+id+'" href="#" title="'+title+'"><span class="calSheet calSheetSmall"><span class="month">'+month[date.getMonth()]+'</span><span class="day">'+date.getDate()+'</span></span><strong class="summary">'+title+'</strong></a><small class="location adr">'+venue+', '+city+', '+country+'</small></li>'
+					  )
+          $("event"+id).click(function(){
+            map.panTo(convertIdToCoordinates($(this).attr("id")));
+          });
 				}
 
 				// vytvoreni a vykresleni na mape
@@ -117,4 +143,39 @@ $(document).ready(function(){
 			return false;
 		}
 	});
+	
+	// inicializace akordeonu
+  $("#accordion").accordion({
+    icons: false,
+    autoHeight: false
+  });
+  
+  // vymazani vseho pri zmene hledani
+  $("#accordion.h3").click(function(){
+    clearOverlays();
+  });
+  
+  // inicializace slideru
+  $("#slider-artist-day").slider({
+    range: "min",
+    value: 5,
+    min: 1,
+    max: 50,
+    slide: function( event, ui ) {
+      $("#artist-day").html(ui.value);
+    }
+  });
+  $("#artist-day").html($("#slider-artist-day").slider("value"));
+
+  $("#slider-place-distance").slider({
+    range: "min",
+    value: 10,
+    min: 1,
+    max: 1000,
+    slide: function( event, ui ) {
+      $("#place-distance").html(ui.value);
+    }
+  });
+  $("#place-distance").html($("#slider-place-distance").slider("value"));
+  
 });
