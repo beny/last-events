@@ -452,67 +452,84 @@ public class Parser
 	 * @return error message
 	 */
 	public static String loadEvents(String keyword, String queryUrl, QueryEvent output, QueryEvent.Types type)
-	{
-		String err = parseEvents(queryUrl, output, type);
-		return err;		
+	{	
+		// Pseudokod:
+		// - zkontroluj storage zda je tam hledany zaznam		
+		// - pokud je, zkontroluj timeout
+		// -		pokud je v poradku, vrat zaznam ze storage
+		// -		jinak nacti data z XML a aktualizuj ve storage
+		// - jinak nacti data z XML a uloz do storage	
+				
+		// TODO unit testy
+		// TODO zakomentovat println
+		// TODO zohlednovat v cache i limit a distance
+		
+		// create storage object
+		QueryEvent storageQuery;
+		String err = null;
+		
+		// try load data from storage
+		storageQuery = Storage.loadData(keyword);
+		
+		// data is in cache
+		if(storageQuery!=null)
+		{
+			Storage.debugInfo(storageQuery, "LOAD");
+			
+			// check timeout			
+			boolean timeout = Storage.checkTimeout(storageQuery.getDate());
+			
+			// fresh data is in storage
+			if(!timeout) 
+			{
+				// copy query object
+				output.setQuery(storageQuery.getKeyword(), storageQuery.getType());
+				output.setDate(storageQuery.getDate());
+        		for(int i = 0;i < storageQuery.getEvents().size();i++)
+				{
+        			Event e = new Event(
+        					storageQuery.getEvents().get(i).getId(),
+        					storageQuery.getEvents().get(i).getTitle(),
+        					storageQuery.getEvents().get(i).getUrl(),
+        					storageQuery.getEvents().get(i).getImage(),
+        					storageQuery.getEvents().get(i).getDate()
+        			);
+        			e.setVenue(
+        					storageQuery.getEvents().get(i).getVenueName(),
+        					storageQuery.getEvents().get(i).getVenueCity(),
+        					storageQuery.getEvents().get(i).getVenueCountry(),
+        					storageQuery.getEvents().get(i).getVenueLat(),
+        					storageQuery.getEvents().get(i).getVenueLon()
+        			);
+        			for(int j = 0;j < storageQuery.getEvents().get(i).getArtists().size(); j++)
+        					e.addArtist(storageQuery.getEvents().get(i).getArtists().get(j));
+        			for(int j = 0;j < storageQuery.getEvents().get(i).getTags().size(); j++)
+    					e.addTag(storageQuery.getEvents().get(i).getTags().get(j));
 
-//		// Pseudokod:
-//		// - zkontroluj storage zda je tam hledany zaznam		
-//		// - pokud je, zkontroluj timeout
-//		// -		pokud je v poradku, vrat zaznam ze storage
-//		// -		jinak nacti data z XML a aktualizuj ve storage
-//		// - jinak nacti data z XML a uloz do storage	
-//		
-//		
-//		// TODO dukladne zkontrolovat funkcnost Storage!!! http://localhost:8888/api/artist/Madonna/5
-//		// TODO unit testy
-//		// TODO zakomentovat println
-//		// TODO zohlednovat v cache i limit a distance
-//		
-//		// create storage object
-//		QueryEvent storageQuery;
-//		String err = null;
-//		
-//		// try load data from storage
-//		// TODO opravit chybu - storageQuery vraci vzdy prazdny seznam eventu ackoliv ve storage je neprazdny!!!
-//		storageQuery = Storage.loadData(keyword);
-//				
-//		// data is in cache
-//		if(storageQuery!=null)
-//		{
-//			Storage.debugInfo(storageQuery, "LOAD");
-//			
-//			// check timeout			
-//			boolean timeout = Storage.checkTimeout(storageQuery.getDate());
-//			
-//			// fresh data is in storage
-//			if(!timeout) 
-//			{
-//				output.setQuery(storageQuery.getKeyword(), storageQuery.getType());
-//				for(int i = 0;i < storageQuery.getEvents().size();i++)
-//				{
-//					output.addEvent(new Event(storageQuery.getEvents().get(i)));
-//					System.out.println("cykl");
-//				}
-//				
-//				Storage.debugInfo(output, "FROM CACHE");
-//				return err;
-//			}
-//			// old data is in storage
-//			else
-//			{
-//				err = parseEvents(queryUrl, output, type);
-//				if(err==null) Storage.updateData(storageQuery.getKey(), output.getEvents());
-//				return err;
-//			}			
-//		}
-//		// data is not in cache
-//		else
-//		{
-//			err = parseEvents(queryUrl, output, type);
-//			if(err==null) Storage.storeData(output);
-//			return err;
-//		}
-	
+        			output.addEvent(e);					
+				}
+				
+				Storage.debugInfo(output, "FROM CACHE");
+				return err;
+			}
+			// old data is in storage
+			else
+			{
+				err = parseEvents(queryUrl, output, type);
+				if(err==null) 
+				{
+					Storage.deleteData(storageQuery.getKeyword());
+					Storage.storeData(output);
+				}
+				return err;
+			}			
+		}
+		// data is not in cache
+		else
+		{
+			err = parseEvents(queryUrl, output, type);
+			if(err==null) Storage.storeData(output);
+			return err;
+		}
 	}
 }

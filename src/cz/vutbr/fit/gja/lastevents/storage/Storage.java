@@ -1,13 +1,10 @@
 package cz.vutbr.fit.gja.lastevents.storage;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
-
-import com.google.appengine.api.datastore.Key;
 
 import cz.vutbr.fit.gja.lastevents.logic.Event;
 import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
@@ -18,7 +15,6 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
 public class Storage 
 {
 	public static final long TIMEOUT_INTERVAL = 24 * 3600000; // in millisecond: x * hours
-	
 	
 	/**
 	 * Store object into the database.
@@ -38,6 +34,41 @@ public class Storage
 		}    
 	}
 	
+	
+	/**
+	 * Delete object from the database.
+	 */
+	@SuppressWarnings("unchecked")
+	public static void deleteData(String keyword)
+	{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+
+		List<QueryEvent> resultList = null;
+		QueryEvent result = null;
+		Query query = pm.newQuery(QueryEvent.class);
+        try
+        {           
+	        query.setFilter("keyword == keywordParam");	
+	        query.declareParameters("String keywordParam");
+	        query.setRange(0, 1);
+
+	        resultList = (List<QueryEvent>) query.execute(keyword);
+	        if(resultList.size()==1) 
+        	{
+        		result = (QueryEvent) resultList.get(0);
+
+        		debugInfo(result, "DELETE");
+        		
+        		pm.deletePersistent(result);
+        	}
+		}
+        finally 
+		{
+        	query.closeAll();
+        	pm.close();
+		}
+	}
+	
 
 	/**
 	 * Load object from database.
@@ -48,6 +79,7 @@ public class Storage
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		List<QueryEvent> resultList = null;
 		QueryEvent result = null;
+		QueryEvent resultReturn = null;
 		Query query = pm.newQuery(QueryEvent.class);
         try
         {           
@@ -57,7 +89,38 @@ public class Storage
 	        //query.setOrdering("date desc");
 
 	        resultList = (List<QueryEvent>) query.execute(keyword);
-	        if(resultList.size()==1) result = (QueryEvent) resultList.get(0);
+	        if(resultList.size()==1) 
+        	{
+        		result = (QueryEvent) resultList.get(0);
+
+        		// copy query object
+        		resultReturn = new QueryEvent(result.getKeyword(), result.getType());
+        		resultReturn.setKey(result.getKey());
+        		resultReturn.setDate(result.getDate());
+        		for(int i = 0;i < result.getEvents().size();i++)
+				{
+        			Event e = new Event(
+        					result.getEvents().get(i).getId(),
+        					result.getEvents().get(i).getTitle(),
+        					result.getEvents().get(i).getUrl(),
+        					result.getEvents().get(i).getImage(),
+        					result.getEvents().get(i).getDate()
+        			);
+        			e.setVenue(
+        					result.getEvents().get(i).getVenueName(),
+        					result.getEvents().get(i).getVenueCity(),
+        					result.getEvents().get(i).getVenueCountry(),
+        					result.getEvents().get(i).getVenueLat(),
+        					result.getEvents().get(i).getVenueLon()
+        			);
+        			for(int j = 0;j < result.getEvents().get(i).getArtists().size(); j++)
+        					e.addArtist(result.getEvents().get(i).getArtists().get(j));
+        			for(int j = 0;j < result.getEvents().get(i).getTags().size(); j++)
+    					e.addTag(result.getEvents().get(i).getTags().get(j));
+
+        			resultReturn.addEvent(e);					
+				}
+        	}
 		}
         finally 
 		{
@@ -65,34 +128,10 @@ public class Storage
         	pm.close();
 		}
         
-        return result;
+        return resultReturn;
 	}
-	
-	
-	
-	/**
-	 * Update object in database.
-	 */
-	public static void updateData(Key updatedObject, ArrayList<Event> newEvents)
-	{
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		try
-		{
-			QueryEvent q = pm.getObjectById(QueryEvent.class, updatedObject);
-						
-			q.setDate(new Date());
-			// TODO zkonstrolovat zda toto funguje!!!
-			q.setEvents(newEvents);	
-			
-			debugInfo(q, "UPDATE");
-		}
-		finally 
-		{
-        	pm.close();
-		}
-	}
-	
-	
+		
+
 	/**
 	 * Check if query is timeouted and needs to be refreshed.
 	 */
