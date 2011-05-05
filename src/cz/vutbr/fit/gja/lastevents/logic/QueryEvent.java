@@ -14,6 +14,7 @@ import org.json.simple.JSONArray;
 
 /**
  * Data class represents one search query.
+ * @author Petr Nohejl <xnohej00@stud.fit.vutbr.cz>
  */
 @PersistenceCapable
 public class QueryEvent

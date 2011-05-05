@@ -8,7 +8,7 @@ import org.restlet.routing.Router;
 import cz.vutbr.fit.gja.lastevents.rest.Resource.Type;
 
 /**
- * Trida zajistujici nastaveni rout na spravny zdroj dat
+ * Handle URL routes.
  * @author Ondrej Benes <xbenes00@stud.fit.vutbr.cz>
  *
  */
@@ -19,7 +19,7 @@ public class API extends Application {
 	}
 
 	/**
-	 * Vytvori RESTlet ktery nasloucha konkretnim routam
+	 * Create REST.
 	 */
 	@Override
 	public synchronized Restlet createRoot() {

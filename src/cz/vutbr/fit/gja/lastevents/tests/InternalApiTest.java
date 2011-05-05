@@ -18,7 +18,7 @@ import cz.vutbr.fit.gja.lastevents.rest.Resource;
 import cz.vutbr.fit.gja.lastevents.rest.Resource.Type;
 
 /**
- * Trida testujici interni rozhrani
+ * Unit tests for internal API.
  * @author Ondrej Benes <xbenes00@stud.fit.vutbr.cz>
  *
  */
@@ -55,7 +55,7 @@ public class InternalApiTest {
 	}
 
 	/**
-	 * Ziskani data dle typu
+	 * Get data by a type.
 	 * @param type
 	 * @param query
 	 * @param limit

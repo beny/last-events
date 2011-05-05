@@ -11,6 +11,7 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
 
 /**
  * Data storage.
+ * @author Petr Nohejl <xnohej00@stud.fit.vutbr.cz>
  */
 public class Storage 
 {
@@ -151,6 +152,9 @@ public class Storage
 	}
 	
 	
+	/**
+	 * Show debug info.
+	 */
 	public static void debugInfo(QueryEvent query, String label)
 	{
 		System.out.println(label + ": " + query.getKeyword() + "|" + query.getDistance() + "|" + query.getLimit() + "|" + query.getType() + "|" + query.getDate() + "|" + query.getEvents().size());
