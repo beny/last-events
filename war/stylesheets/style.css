@@ -66,3 +66,9 @@ form#search {
 /*  font-size: 12px;*/
   padding: 0 0 10px 5px;
 }
+
+.ico-artist {background-image:url('../images/glyphicons__033_group.png') !important;background-repeat:no-repeat !important;background-position: 10px 8px  !important;}
+.ico-place {background-image:url('../images/glyphicons__065_home.png') !important;background-repeat:no-repeat !important;background-position: 14px 8px  !important;}
+.accordion-title {text-align:left !important;padding: 10px 0 10px 58px !important;}
+.infotext {font-size:12px;}
+.search-input {background:url('../images/glyphicons__031_search.png') no-repeat 3px 3px;border: 1px solid #D8DCDF;border-radius: 6px; -moz-border-radius: 6px; -webkit-border-radius: 6px;width: 246px;height:20px;line-height:20px;padding-left:25px;}

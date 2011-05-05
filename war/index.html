@@ -20,15 +20,15 @@
 <body> 
   <div id="sidebar">
     <div id="sidebar-header">
-      <h1><img src="images/icon.png" alt="" />&nbsp;Last Events</h1>
+      <h1>Last Events</h1>
     </div>
     <div id="accordion">
-      <h3>Search by artist</h3>
+      <h3 class="ico-artist accordion-title">Search by artist</h3>
       <div>
-        <div id="search">
-          <input type="text" id="artist-search" size="26">
+        <div class="search">
+          <input class="search-input" type="text" id="artist-search" size="26">
           <div id="slider-artist-day" class="slider"></div>
-          <div>Search at max for <span id="artist-day">10</span> events</div>
+          <div class="infotext">Search at max for <span id="artist-day">10</span> events</div>
         </div>
         <div>
           <div class="eventlist">
@@ -37,14 +37,14 @@
           </div>
         </div>
       </div>
-      <h3>Search by place</h3>
+      <h3 class="ico-place accordion-title">Search by place</h3>
       <div>
-        <div id="search">
-          <input type="text" id="location-search" size="26">
+        <div class="search">
+          <input class="search-input" type="text" id="location-search" size="26">
           <div id="slider-place-distance" class="slider"></div>
-          <div>Search in distance <span id="place-distance">10</span> km</div>
+          <div class="infotext">Search in distance <span id="place-distance">10</span> km</div>
           <div id="slider-place-count" class="slider"></div>
-          <div>Max <span id="place-count">10</span> search results</div>
+          <div class="infotext">Max <span id="place-count">10</span> search results</div>
             <div class="eventlist">
               <ul id="events-location" class="eventsSmall">
             </div>
