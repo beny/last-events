@@ -27,17 +27,17 @@ public class LastFmApiTest {
 		String url = new String();
 
 		url = lastApi.getEventsByArtist("Wohnout", 5);
-		String err = Parser.parseEvents(url, query, QueryEvent.Types.SEARCH_BY_ARTIST);
+		String err = Parser.parseEvents(0, 5, url, query, QueryEvent.Types.SEARCH_BY_ARTIST);
 		String result = query.getJSONResult();
 
 		query = new QueryEvent();
 		url = lastApi.getEventsByArtist("Wohnout", 5);
-		Parser.parseEvents(url, query, QueryEvent.Types.SEARCH_BY_ARTIST);
+		Parser.parseEvents(0, 5, url, query, QueryEvent.Types.SEARCH_BY_ARTIST);
 		String result2 = query.getJSONResult();
 
 		query = new QueryEvent();
 		url = lastApi.getEventsByArtist("Wohnout", 3);
-		Parser.parseEvents(url, query, QueryEvent.Types.SEARCH_BY_ARTIST);
+		Parser.parseEvents(0, 5, url, query, QueryEvent.Types.SEARCH_BY_ARTIST);
 		String result3 = query.getJSONResult();
 
 		assertNull(err);
@@ -52,17 +52,17 @@ public class LastFmApiTest {
 		String url = new String();
 
 		url = lastApi.getEventsByLocation("Brno", 10, 5);
-		String err = Parser.parseEvents(url, query, QueryEvent.Types.SEARCH_BY_LOCATION);
+		String err = Parser.parseEvents(10, 5, url, query, QueryEvent.Types.SEARCH_BY_LOCATION);
 		String result = query.getJSONResult();
 
 		query = new QueryEvent();
 		url = lastApi.getEventsByLocation("Brno", 10, 5);
-		Parser.parseEvents(url, query, QueryEvent.Types.SEARCH_BY_LOCATION);
+		Parser.parseEvents(10, 5, url, query, QueryEvent.Types.SEARCH_BY_LOCATION);
 		String result2 = query.getJSONResult();
 
 		query = new QueryEvent();
 		url = lastApi.getEventsByLocation("Brno", 10, 3);
-		Parser.parseEvents(url, query, QueryEvent.Types.SEARCH_BY_LOCATION);
+		Parser.parseEvents(10, 5, url, query, QueryEvent.Types.SEARCH_BY_LOCATION);
 		String result3 = query.getJSONResult();
 
 		assertNull(err);

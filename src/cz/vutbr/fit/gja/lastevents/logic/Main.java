@@ -24,8 +24,8 @@ public class Main
 		QueryEvent query1 = new QueryEvent();
 		QueryEvent query2 = new QueryEvent();
 		
-		String res1 = Parser.parseEvents(url1, query1, QueryEvent.Types.SEARCH_BY_LOCATION);
-		String res2 = Parser.parseEvents(url2, query2, QueryEvent.Types.SEARCH_BY_ARTIST);
+		String res1 = Parser.parseEvents(10, 5, url1, query1, QueryEvent.Types.SEARCH_BY_LOCATION);
+		String res2 = Parser.parseEvents(0, 5, url2, query2, QueryEvent.Types.SEARCH_BY_ARTIST);
 		
 		if(res1 == "") query1.printQuery();
 		if(res2 == "") query2.printQuery();

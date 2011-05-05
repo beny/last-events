@@ -25,6 +25,10 @@ public class QueryEvent
 	@Persistent
 	private String keyword;
 	@Persistent
+	private int distance;
+	@Persistent
+	private int limit;
+	@Persistent
 	private QueryEvent.Types type;
 	@Persistent
 	private Date date;
@@ -47,9 +51,11 @@ public class QueryEvent
 	/**
 	 * Create query.
 	 */
-	public QueryEvent(String keyword, QueryEvent.Types type)
+	public QueryEvent(String keyword, int distance, int limit, QueryEvent.Types type)
 	{
 		this.keyword = keyword;
+		this.distance = distance;
+		this.limit = limit;
 		this.type = type;
 
 		this.date = new Date();
@@ -60,9 +66,11 @@ public class QueryEvent
 	/**
 	 * Set query.
 	 */
-	public void setQuery(String keyword, QueryEvent.Types type)
+	public void setQuery(String keyword, int distance, int limit, QueryEvent.Types type)
 	{
 		this.keyword = keyword;
+		this.distance = distance;
+		this.limit = limit;
 		this.type = type;
 	}
 
@@ -83,6 +91,8 @@ public class QueryEvent
 	{
 		System.out.println("----------------------------------------");
 		System.out.println("KEYWORD: " + keyword);
+		System.out.println("DIST: " + distance);
+		System.out.println("LIMIT: " + limit);
 		System.out.println("TYPE: " + type.toString());
 		System.out.println("DATE: " + date.toString());
 		for(int i=0;i<events.size();i++)
@@ -110,10 +120,13 @@ public class QueryEvent
 
 	public Key getKey() { return this.key; }
 	public String getKeyword() { return this.keyword; }
+	public int getDistance() { return this.distance; }
+	public int getLimit() { return this.limit; }
 	public QueryEvent.Types getType() { return this.type; }
 	public Date getDate() { return this.date; }
 	public ArrayList<Event> getEvents() { return this.events; }
 	
+	public void setKey(Key key) { this.key = key; }
 	public void setDate(Date date) { this.date = date; }
 	public void setEvents(ArrayList<Event> events) { this.events = events; }
 }

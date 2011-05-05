@@ -29,7 +29,9 @@ public class API extends Application {
 		router.attach("/search/artist/{query}", new Resource(Type.SEARCH_ARTIST));
 		router.attach("/search/artist/{query}/{count}", new Resource(Type.SEARCH_ARTIST_WITH_COUNTS));		
 		router.attach("/search/location/{query}", new Resource(Type.SEARCH_LOCATION));
-		router.attach("/search/location/{query}/{count}", new Resource(Type.SEARCH_LOCATION_WITH_COUNTS));		
+		router.attach("/search/location/{query}/{count}", new Resource(Type.SEARCH_LOCATION_WITH_COUNTS));
+		router.attach("/search/tag/{query}", new Resource(Type.SEARCH_TAG));
+		router.attach("/search/tag/{query}/{count}", new Resource(Type.SEARCH_TAG_WITH_COUNTS));
 		router.attach("/artist/{query}", new Resource(Type.ARTIST));
 		router.attach("/artist/{query}/{count}", new Resource(Type.ARTIST_WITH_COUNT));
 		router.attach("/location/{query}", new Resource(Type.LOCATION));

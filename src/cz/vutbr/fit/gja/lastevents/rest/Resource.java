@@ -9,6 +9,7 @@ import cz.vutbr.fit.gja.lastevents.logic.Parser;
 import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
 import cz.vutbr.fit.gja.lastevents.logic.QueryArtist;
 import cz.vutbr.fit.gja.lastevents.logic.QueryLocation;
+import cz.vutbr.fit.gja.lastevents.logic.QueryTag;
 
 /**
  * Trida reprezentujici zdroj dat podle typu aplikovane routy
@@ -18,7 +19,7 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryLocation;
 public class Resource extends Restlet {
 
 	public static enum Type {ARTIST, ARTIST_WITH_COUNT, LOCATION, LOCATION_WITH_DISTANCE, LOCATION_WITH_DISTANCE_AND_COUNT,
-		SEARCH_ARTIST, SEARCH_ARTIST_WITH_COUNTS, SEARCH_LOCATION, SEARCH_LOCATION_WITH_COUNTS};
+		SEARCH_ARTIST, SEARCH_ARTIST_WITH_COUNTS, SEARCH_LOCATION, SEARCH_LOCATION_WITH_COUNTS, SEARCH_TAG, SEARCH_TAG_WITH_COUNTS};
 	public final static int DEFAULT_DISTANCE = 10;
 	public final static int DEFAULT_COUNT = 5;
 	public final static int DEFAULT_COUNT_SEARCH = 5; // pro naseptavac
@@ -38,6 +39,8 @@ public class Resource extends Restlet {
 		String message = new String();
 		String url = new String();
 		String keyword = (String) request.getAttributes().get("query");
+		int count = DEFAULT_COUNT;
+		int distance = DEFAULT_DISTANCE;
 		QueryEvent.Types typeQuery = QueryEvent.Types.SEARCH_BY_ARTIST;
 
 		switch (type) {
@@ -52,6 +55,7 @@ public class Resource extends Restlet {
 					keyword,
 					new Integer(request.getAttributes().get("count").toString()));
 			typeQuery = QueryEvent.Types.SEARCH_BY_ARTIST;
+			count = Integer.parseInt((String) request.getAttributes().get("count"));
 			break;
 		case LOCATION:
 			url = lastApi.getEventsByLocation(
@@ -66,6 +70,7 @@ public class Resource extends Restlet {
 					new Integer(request.getAttributes().get("distance").toString()),
 					DEFAULT_COUNT);
 			typeQuery = QueryEvent.Types.SEARCH_BY_LOCATION;
+			distance = Integer.parseInt((String) request.getAttributes().get("distance"));
 			break;
 		case LOCATION_WITH_DISTANCE_AND_COUNT:
 			url = lastApi.getEventsByLocation(
@@ -73,6 +78,8 @@ public class Resource extends Restlet {
 					new Integer(request.getAttributes().get("distance").toString()),
 					new Integer(request.getAttributes().get("count").toString()));
 			typeQuery = QueryEvent.Types.SEARCH_BY_LOCATION;
+			distance = Integer.parseInt((String) request.getAttributes().get("distance"));
+			count = Integer.parseInt((String) request.getAttributes().get("count"));
 			break;
 		case SEARCH_ARTIST:
 			url = lastApi.getArtists(keyword, DEFAULT_COUNT_SEARCH);
@@ -86,6 +93,13 @@ public class Resource extends Restlet {
 			break;
 		case SEARCH_LOCATION_WITH_COUNTS:
 			url = lastApi.getLocations(keyword,
+					new Integer(request.getAttributes().get("count").toString()));
+			break;
+		case SEARCH_TAG:
+			url = lastApi.getTags(keyword, DEFAULT_COUNT_SEARCH);
+			break;
+		case SEARCH_TAG_WITH_COUNTS:
+			url = lastApi.getTags(keyword,
 					new Integer(request.getAttributes().get("count").toString()));
 			break;
 		default:
@@ -111,9 +125,17 @@ public class Resource extends Restlet {
 				response.setEntity(message, MediaType.TEXT_PLAIN);
 			}
 		}
+		else if(type == Type.SEARCH_TAG || type == Type.SEARCH_TAG_WITH_COUNTS){
+			QueryTag queryTag = new QueryTag();
+			res = Parser.loadTags(url, queryTag);
+			if(res == null) {
+				message = queryTag.getJSONResult();
+				response.setEntity(message, MediaType.TEXT_PLAIN);
+			}
+		}
 		else {
 			QueryEvent query = new QueryEvent();
-			res = Parser.loadEvents(keyword, url, query, typeQuery);
+			res = Parser.loadEvents(keyword, distance, count, url, query, typeQuery);
 			if(res == null) {
 				message = query.getJSONResult();
 				response.setEntity(message, MediaType.TEXT_PLAIN);
