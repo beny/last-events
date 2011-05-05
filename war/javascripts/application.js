@@ -106,7 +106,10 @@ $(document).ready(function(){
 				var city = data[i].venue.city;
 				var venue = data[i].venue.name;
 				var country = data[i].venue.country;
-
+				var eventImage = data[i].image;
+				var artists = data[i].artists;
+				var tags = data[i].tags;
+				
 				// preskoc pokud nejsou zadany souradnice
 				if(lat == 0 && lon == 0) continue;
 
@@ -115,39 +118,71 @@ $(document).ready(function(){
 				points.push(p);
 				pathPoints.push(p);
 				bounds.extend(p);
+			
 				markers.push(new google.maps.Marker({
 					position: p,
 					map: map,
 					icon: image,
 					id: id
-					}));
-
+				}));
+				
 					// seznam eventu v liste
-					$(element).append(
-						'<li><a id="event'+id+'" href="#" title="'+title+'"><span class="calSheet calSheetSmall"><span class="month">'+month[date.getMonth()]+'</span><span class="day">'+date.getDate()+'</span></span><strong class="summary">'+title+'</strong></a><small class="location adr">'+venue+', '+city+', '+country+'</small></li>'
-					)
-					$("#event"+id).click(function(){
-						map.panTo(convertIdToCoordinates($(this).attr("id")));
-					});
-				}
+				$(element).append(
+					'<li ><a href="#" id="event'+id+'"  title=""><span class="calSheet calSheetSmall"><span class="month">'+month[date.getMonth()]+'</span><span class="day">'+date.getDate()+'</span></span><strong class="summary">'+title+'</strong></a><small class="location adr">'+venue+', '+city+', '+country+'</small></li>'
+				)
+				$("#event"+id).click(function(){
+					map.panTo(convertIdToCoordinates($(this).attr("id")));
+				});
+				
+				console.log(artists);
+				$("#event"+id).CreateBubblePopup({
 
-				// pokud je umelec, vykresli drahu
-				if(type == "artist"){
-					// vytvoreni a vykresleni na mape
-					path = new google.maps.Polyline({
-						path: pathPoints,
-						strokeColor: "#db1302",
-						strokeOpacity: 0.5,
-						strokeWeight: 5
-					});
-					path.setMap(map);
-				}
-				// zacentrovani na body
-				map.fitBounds(bounds);
-			});
-			
-		}
+					position : 'right',
+					align	 : 'middle',
+					selectable: true,
 
+					innerHtml: '<div style="width:350px;padding-left:5px;padding-right:5px;">' +
+						'<h3 style="color:#ce1700;font-size:18px">'+title+'</h3>' + 
+					    '<div style="width:128px;float:right;padding-left:16px;">' +
+					        '<img src="'+eventImage+'" alt="" style="width:128px;" />' +
+					    '</div>' +
+					    '<div style="width:190px;float:left;font-size:11px;text-align:left">' +
+					        '<p><b style="color:#ce1700">Artists:</b> '+artists.join(", ")+'</p>' +
+					        '<p><b style="color:#ce1700">Date:</b> '+month[date.getMonth()]+' '+date.getDate()+', '+date.getYear()+'</p>' +
+					        '<p><b style="color:#ce1700">Place:</b> '+venue+', '+city+', '+country+'</p>' +
+					        '<p><b style="color:#ce1700">Tags:</b> '+tags.join(", ")+'</p>' +
+					    '</div>' +
+
+					    '<div style="clear:both"></div>' +
+					'</div>',
+
+					innerHtmlStyle: {
+						color:'#FFFFFF',
+					},
+
+					themeName: 	'all-black',
+					themePath: 	'images/jquerybubblepopup-theme'
+
+				});
+			}
+
+			// pokud je umelec, vykresli drahu
+			if(type == "artist"){
+				// vytvoreni a vykresleni na mape
+				path = new google.maps.Polyline({
+					path: pathPoints,
+					strokeColor: "#db1302",
+					strokeOpacity: 0.5,
+					strokeWeight: 5
+				});
+				path.setMap(map);
+			}
+			// zacentrovani na body
+			map.fitBounds(bounds);
+		});
+		
+	}
+	
 	// autocomplete
 	$("#artist-search").autocomplete({
 		open: function(event, ui) { 
@@ -175,16 +210,13 @@ $(document).ready(function(){
 			ajaxSearch("artist", ui.item.value);
 			return false;
 		},
-	});
+	}).keypress(function(event){
+			if(event.keyCode == 13 && $(this).val() && $(".ui-state-hover").size() == 0){
+				$("#artist-search").autocomplete("close");
+				ajaxSearch("artist", $(this).val());
+			}
+		});
 	
-	// odesilani enterem
-	$("#artist-search").keyup(function(event){
-		if(event.keyCode == 13 && $(this).val()){
-			$("#artist-search").autocomplete("close");
-			ajaxSearch("artist", $(this).val());
-		}
-	});
-
 	$("#location-search").autocomplete({
 		open: function(event, ui) { 
 			$(".ui-slider-handle").css("z-index", -1); 
@@ -210,16 +242,14 @@ $(document).ready(function(){
 		select: function( event, ui ) {
 			ajaxSearch("location", ui.item.value);
 			return false;
+		}
+		}).keypress(function(event){
+			if(event.keyCode == 13 && $(this).val()){
+				$(this).disable();
+				$("#location-search").autocomplete("close");
+				$(this).enable();
 			}
 		});
-
-	// odesilani enterem
-	$("#location-search").keyup(function(event){
-		if(event.keyCode == 13 && $(this).val()){
-			$("#location-search").autocomplete("close");
-			ajaxSearch("location", $(this).val());
-		}
-	});
 
 	// inicializace akordeonu
 	$("#accordion").accordion({
