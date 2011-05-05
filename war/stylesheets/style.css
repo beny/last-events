@@ -37,6 +37,13 @@ body {
   margin: 0px;
 }
 
+.eventlist {
+	margin: 0 0 0 10px;
+	min-height: 0px;
+	max-height: 400px;
+	overflow:auto;
+}
+
 
 /* search form */
 form#search {
