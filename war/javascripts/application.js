@@ -180,7 +180,7 @@ $(document).ready(function(){
 	
 	// odesilani enterem
 	$("#artist-search").keyup(function(event){
-		if(event.keyCode == 13){
+		if(event.keyCode == 13 && $(this).val()){
 			$("#artist-search").autocomplete("close");
 			ajaxSearch("artist", $(this).val());
 		}
@@ -216,7 +216,7 @@ $(document).ready(function(){
 
 	// odesilani enterem
 	$("#location-search").keyup(function(event){
-		if(event.keyCode == 13){
+		if(event.keyCode == 13 && $(this).val()){
 			$("#location-search").autocomplete("close");
 			ajaxSearch("location", $(this).val());
 		}
@@ -243,7 +243,8 @@ $(document).ready(function(){
 			$("#artist-day").html(ui.value);
 		},
 		stop: function( event, ui){
-			ajaxSearch("artist", $("#artist-search").val());
+			if($("#artist-search").val())
+				ajaxSearch("artist", $("#artist-search").val());
 		}
 	});
 	$("#artist-day").html($("#slider-artist-day").slider("value"));
@@ -258,7 +259,8 @@ $(document).ready(function(){
 			$("#place-distance").html(ui.value);
 		},
 		stop: function( event, ui){
-			ajaxSearch("location", $("#location-search").val());
+			if($("#location-search").val())
+				ajaxSearch("location", $("#location-search").val());
 		}
 	});
 	$("#place-distance").html($("#slider-place-distance").slider("value"));
@@ -272,7 +274,8 @@ $(document).ready(function(){
 			$("#place-count").html(ui.value);
 		},
 		stop: function( event, ui){
-			ajaxSearch("location", $("#location-search").val());
+			if($("#location-search").val())
+				ajaxSearch("location", $("#location-search").val());
 		}
 	});
 	$("#place-count").html($("#slider-place-count").slider("value"));
