@@ -141,12 +141,12 @@ $(document).ready(function(){
 					align	 : 'middle',
 					selectable: true,
 
-					innerHtml: '<div style="width:350px;padding-left:5px;padding-right:5px;">' +
+					innerHtml: '<div style="width:auto;padding-left:5px;padding-right:5px;">' +
 						'<h3 style="color:#ce1700;font-size:18px">'+title+'</h3>' + 
-					    '<div style="width:128px;float:right;padding-left:16px;">' +
+					    '<div style="width:auto;float:right;padding-left:16px;">' +
 					        '<img src="'+eventImage+'" alt="" style="width:128px;" />' +
 					    '</div>' +
-					    '<div style="width:190px;float:left;font-size:11px;text-align:left">' +
+					    '<div style="max-width:200px;float:left;font-size:11px;text-align:left">' +
 					        '<p><b style="color:#ce1700">Artists:</b> '+artists.join(", ")+'</p>' +
 					        '<p><b style="color:#ce1700">Date:</b> '+month[date.getMonth()]+' '+date.getDate()+', '+date.getYear()+'</p>' +
 					        '<p><b style="color:#ce1700">Place:</b> '+venue+', '+city+', '+country+'</p>' +

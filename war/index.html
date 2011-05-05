@@ -28,6 +28,7 @@
       <h3 class="ico-artist accordion-title">Search by artist</h3>
       <div>
         <div class="search">
+          <input class="search-input" type="text" id="artist-search" size="26">
           <div id="slider-artist-day" class="slider"></div>
           <div class="infotext">Search at max for <span id="artist-day">10</span> events</div>
         </div>
@@ -55,5 +56,18 @@
     </div>
   </div>
   <div id="map_canvas"></div>
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-147084-15']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
 </body> 
 </html>
