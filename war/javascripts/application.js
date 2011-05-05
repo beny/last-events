@@ -126,7 +126,7 @@ $(document).ready(function(){
 					$(element).append(
 						'<li><a id="event'+id+'" href="#" title="'+title+'"><span class="calSheet calSheetSmall"><span class="month">'+month[date.getMonth()]+'</span><span class="day">'+date.getDate()+'</span></span><strong class="summary">'+title+'</strong></a><small class="location adr">'+venue+', '+city+', '+country+'</small></li>'
 					)
-					$("event"+id).click(function(){
+					$("#event"+id).click(function(){
 						map.panTo(convertIdToCoordinates($(this).attr("id")));
 					});
 				}
@@ -146,7 +146,6 @@ $(document).ready(function(){
 				map.fitBounds(bounds);
 			});
 			
-			// $.unblockUI();
 		}
 
 	// autocomplete
