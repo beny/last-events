@@ -6,6 +6,7 @@ import org.json.simple.JSONArray;
 
 /**
  * Data class represents one search query of artists.
+ * @author Petr Nohejl <xnohej00@stud.fit.vutbr.cz>
  */
 public class QueryArtist
 {
@@ -64,7 +65,7 @@ public class QueryArtist
 	}
 
 	/**
-	 * @return JSON reprezentace dat
+	 * @return JSON data representation.
 	 */
 	@SuppressWarnings("unchecked")
 	public String getJSONResult(){

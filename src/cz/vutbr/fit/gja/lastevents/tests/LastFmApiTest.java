@@ -8,7 +8,7 @@ import cz.vutbr.fit.gja.lastevents.logic.Parser;
 import cz.vutbr.fit.gja.lastevents.logic.QueryEvent;
 
 /**
- * Soubor s testy pro API last FM
+ * Unit tests for Last.fm API.
  * @author Ondrej Benes <xbenes00@stud.fit.vutbr.cz>
  *
  */

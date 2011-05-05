@@ -2,6 +2,7 @@ package cz.vutbr.fit.gja.lastevents.logic;
 
 /**
  * Testing class.
+ * @author Petr Nohejl <xnohej00@stud.fit.vutbr.cz>
  */
 public class Main 
 {

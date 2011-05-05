@@ -12,7 +12,7 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryLocation;
 import cz.vutbr.fit.gja.lastevents.logic.QueryTag;
 
 /**
- * Trida reprezentujici zdroj dat podle typu aplikovane routy
+ * Class representing data source by a specific type of route.
  * @author Ondrej Benes <xbenes00@stud.fit.vutbr.cz>
  *
  */

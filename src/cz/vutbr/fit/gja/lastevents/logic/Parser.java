@@ -17,6 +17,7 @@ import cz.vutbr.fit.gja.lastevents.storage.Storage;
 /**
  * Parser for Last.fm data.
  * Send requests to Last.fm server and get event's data in XML.
+ * @author Petr Nohejl <xnohej00@stud.fit.vutbr.cz>
  */
 public class Parser
 {

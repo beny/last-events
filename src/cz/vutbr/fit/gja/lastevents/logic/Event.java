@@ -15,6 +15,7 @@ import com.google.appengine.api.datastore.Key;
 
 /**
  * Data class represents one last-event. 
+ * @author Petr Nohejl <xnohej00@stud.fit.vutbr.cz>
  */
 @PersistenceCapable
 public class Event 
@@ -167,7 +168,7 @@ public class Event
 	}
 	
 	/**
-	 * @return JSON objekt s eventem
+	 * @return JSON data representation.
 	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject getJSONEvent(){
