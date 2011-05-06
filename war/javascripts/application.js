@@ -148,7 +148,7 @@ $(document).ready(function(){
 					    '</div>' +
 					    '<div style="max-width:200px;float:left;font-size:11px;text-align:left">' +
 					        '<p><b style="color:#ce1700">Artists:</b> '+artists.join(", ")+'</p>' +
-					        '<p><b style="color:#ce1700">Date:</b> '+month[date.getMonth()]+' '+date.getDate()+', '+date.getYear()+'</p>' +
+					        '<p><b style="color:#ce1700">Date:</b> '+month[date.getMonth()]+' '+date.getDate()+', '+date.getFullYear()+'</p>' +
 					        '<p><b style="color:#ce1700">Place:</b> '+venue+', '+city+', '+country+'</p>' +
 					        '<p><b style="color:#ce1700">Tags:</b> '+tags.join(", ")+'</p>' +
 					    '</div>' +
