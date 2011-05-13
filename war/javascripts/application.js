@@ -139,7 +139,7 @@ $(document).ready(function(){
 					map.panTo(convertIdToCoordinates($(this).attr("id")));
 				});
 				
-				console.log(artists);
+				// console.log(artists);
 				$("#event"+id).CreateBubblePopup({
 
 					position : 'right',
