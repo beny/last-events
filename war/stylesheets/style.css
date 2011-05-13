@@ -30,6 +30,12 @@ body {
 	overflow-x: hidden !important;
 }
 
+.help {
+	font-size: 10px;
+	position:absolute;
+	bottom:0;
+}
+
 #sidebar-header {
   padding: 5px;
   color: white;
