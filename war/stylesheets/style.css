@@ -17,11 +17,17 @@ body {
 #sidebar {
   float: left;
   width: 300px;
+	height: 100%;
+	overflow: auto;
 }
 
 #sidebar p {
 /*  font-size: 12px;*/
   
+}
+
+.ui-accordion-content {
+	overflow-x: hidden !important;
 }
 
 #sidebar-header {
@@ -40,7 +46,6 @@ body {
 .eventlist {
 	margin: 0 0 0 10px;
 	min-height: 0px;
-	max-height: 400px;
 	overflow:auto;
 }
 

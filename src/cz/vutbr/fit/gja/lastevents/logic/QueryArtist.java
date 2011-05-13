@@ -78,6 +78,7 @@ public class QueryArtist
 		return namesJSON.toJSONString();
 	}
 
+	// getters and setters
 	public String getKeyword() { return this.keyword; }
 	public ArrayList<String> getNames() { return this.names; }
 }

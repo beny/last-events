@@ -22,7 +22,7 @@ public class QueryEvent
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
-	
+
 	@Persistent
 	private String keyword;
 	@Persistent
@@ -119,6 +119,7 @@ public class QueryEvent
 
 	}
 
+	// getters
 	public Key getKey() { return this.key; }
 	public String getKeyword() { return this.keyword; }
 	public int getDistance() { return this.distance; }
@@ -126,7 +127,8 @@ public class QueryEvent
 	public QueryEvent.Types getType() { return this.type; }
 	public Date getDate() { return this.date; }
 	public ArrayList<Event> getEvents() { return this.events; }
-	
+
+	// setters
 	public void setKey(Key key) { this.key = key; }
 	public void setDate(Date date) { this.date = date; }
 	public void setEvents(ArrayList<Event> events) { this.events = events; }

@@ -18,16 +18,37 @@ import cz.vutbr.fit.gja.lastevents.logic.QueryTag;
  */
 public class Resource extends Restlet {
 
+	/**
+	 * enum with resource type
+	 */
 	public static enum Type {ARTIST, ARTIST_WITH_COUNT, LOCATION, LOCATION_WITH_DISTANCE, LOCATION_WITH_DISTANCE_AND_COUNT,
 		SEARCH_ARTIST, SEARCH_ARTIST_WITH_COUNTS, SEARCH_LOCATION, SEARCH_LOCATION_WITH_COUNTS, SEARCH_TAG, SEARCH_TAG_WITH_COUNTS};
+
+
+	/**
+	 * Default distance
+	 */
 	public final static int DEFAULT_DISTANCE = 10;
+
+
+	/**
+	 * Default query result count
+	 */
 	public final static int DEFAULT_COUNT = 5;
-	public final static int DEFAULT_COUNT_SEARCH = 5; // pro naseptavac
+
+	/**
+	 * Default query result for autocomplete count
+	 */
+	public final static int DEFAULT_COUNT_SEARCH = 5;
 
 	private Type type;
 	private final static String LASTFM_KEY = "c8e71fc5e7255264940483b4228c010f";
 	private final static String GEONAMES_USERNAME = "lastevents";
 
+	/**
+	 * Default constructor
+	 * @param type
+	 */
 	public Resource(Type type) {
 		this.type = type;
 	}
@@ -106,7 +127,7 @@ public class Resource extends Restlet {
 			break;
 		}
 
-		
+
 		// vyber z jakych objektu mas odpovidat
 		String res = new String();
 		if(type == Type.SEARCH_ARTIST || type == Type.SEARCH_ARTIST_WITH_COUNTS){
@@ -141,7 +162,7 @@ public class Resource extends Restlet {
 				response.setEntity(message, MediaType.TEXT_PLAIN);
 			}
 		}
-		
+
 
 		// nastala chyba
 		if(res != null){

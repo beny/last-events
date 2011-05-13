@@ -14,27 +14,31 @@ import org.json.simple.JSONObject;
 import com.google.appengine.api.datastore.Key;
 
 /**
- * Data class represents one last-event. 
+ * Data class represents one last-event.
  * @author Petr Nohejl <xnohej00@stud.fit.vutbr.cz>
  */
+/**
+ * @author beny
+ *
+ */
 @PersistenceCapable
-public class Event 
+public class Event
 {
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
-	
+
 	@Persistent
 	private int id;
 	@Persistent
-	private String title;	
+	private String title;
 	@Persistent
-	private String url;	
+	private String url;
 	@Persistent
 	private String image;
 	@Persistent
 	private Date date;
-		
+
 	@Persistent
 	private String venueName;
 	@Persistent
@@ -45,13 +49,13 @@ public class Event
 	private double venueLat; // optional
 	@Persistent
 	private double venueLon; // optional
-	
+
 	@Persistent
 	private ArrayList<String> artists;
 	@Persistent
 	private ArrayList<String> tags; // optional
-	
-	
+
+
 	/**
 	 * Create event.
 	 * Set the most important data.
@@ -63,19 +67,23 @@ public class Event
 		this.url = url;
 		this.image = image;
 		this.date = date;
-		
+
 		this.artists = new ArrayList<String>();
 		this.tags = new ArrayList<String>();
 	}
-	
-	
-	public Event(Event copy) 
-	{    
+
+
+	/**
+	 * Contructor for creating object as a copy of existing one
+	 * @param copy
+	 */
+	public Event(Event copy)
+	{
 	    this.id = copy.id;
-		this.title = copy.title;	
-		this.url = copy.url;	
+		this.title = copy.title;
+		this.url = copy.url;
 		this.image = copy.image;
-		this.date = copy.date;			
+		this.date = copy.date;
 		this.venueName = copy.venueName;
 		this.venueCity = copy.venueCity;
 		this.venueCountry = copy.venueCountry;
@@ -84,10 +92,10 @@ public class Event
 		this.artists = copy.artists;
 		this.tags = copy.tags;
 	}
-	
-	
+
+
 	/**
-	 * Set venue data. 
+	 * Set venue data.
 	 */
 	public void setVenue(String venueName, String venueCity, String venueCountry, double venueLat, double venueLon)
 	{
@@ -97,28 +105,28 @@ public class Event
 		this.venueLat = venueLat;
 		this.venueLon = venueLon;
 	}
-	
-	
+
+
 	/**
-	 * Add artist to event. 
+	 * Add artist to event.
 	 */
 	public void addArtist(String artist)
 	{
 		this.artists.add(artist);
 	}
-	
-	
+
+
 	/**
-	 * Add event's tag. 
+	 * Add event's tag.
 	 */
 	public void addTag(String tag)
 	{
 		this.tags.add(tag);
 	}
-	
-	
+
+
 	/**
-	 * Print event info to standard output. 
+	 * Print event info to standard output.
 	 */
 	public void printEvent()
 	{
@@ -141,9 +149,13 @@ public class Event
 			System.out.println("TAG: " + tags.get(i));
 		}
 	}
-	
+
+	/**
+	 * Debug print of object state
+	 * @return
+	 */
 	public String getEvent(){
-		
+
 		String result = new String();
 		result += "ID: " + id;
 		result += "TITLE: " + title;
@@ -163,10 +175,10 @@ public class Event
 		{
 			result += "TAG: " + tags.get(i);
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * @return JSON data representation.
 	 */
@@ -179,7 +191,7 @@ public class Event
 		obj.put("url", url);
 		obj.put("image", image);
 		obj.put("date", date.toString());
-		
+
 		// venue object
 		JSONObject venueJSON = new JSONObject();
 		venueJSON.put("name", venueName);
@@ -187,36 +199,36 @@ public class Event
 		venueJSON.put("country", venueCountry);
 		venueJSON.put("lat", venueLat);
 		venueJSON.put("lon", venueLon);
-		
+
 		obj.put("venue", venueJSON);
-		
+
 		JSONArray artistsJSON = new JSONArray();
 		for(int i=0;i<artists.size();i++){
 			artistsJSON.add(artists.get(i));
 		}
 		obj.put("artists", artistsJSON);
-		
+
 		JSONArray tagsJSON = new JSONArray();
 		for(int i=0;i<tags.size();i++){
 			tagsJSON.add(tags.get(i));
 		}
 		obj.put("tags", tagsJSON);
-		
+
 		return obj;
 	}
-	
-	
+
+	// getters and setters
 	public Key getKey() { return this.key; }
 	public int getId() { return this.id; }
-	public String getTitle() { return this.title; }	
-	public String getUrl() { return this.url; }	
+	public String getTitle() { return this.title; }
+	public String getUrl() { return this.url; }
 	public String getImage() { return this.image; }
-	public Date getDate() { return this.date; }	
+	public Date getDate() { return this.date; }
 	public String getVenueName() { return this.venueName; }
 	public String getVenueCity() { return this.venueCity; }
 	public String getVenueCountry() { return this.venueCountry; }
 	public double getVenueLat() { return this.venueLat; }
-	public double getVenueLon() { return this.venueLon; }	
+	public double getVenueLon() { return this.venueLon; }
 	public ArrayList<String> getArtists() { return this.artists; }
-	public ArrayList<String> getTags() { return this.tags; } 
+	public ArrayList<String> getTags() { return this.tags; }
 }

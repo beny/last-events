@@ -1,3 +1,8 @@
+//
+// autor: Ondrej Benes
+// project: GJA 
+//
+
 $(document).ajaxStop($.unblockUI);
 $(document).ready(function(){ 
 

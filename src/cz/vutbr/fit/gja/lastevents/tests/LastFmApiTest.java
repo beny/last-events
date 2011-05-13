@@ -16,6 +16,9 @@ public class LastFmApiTest {
 
 	private Parser lastApi;
 
+	/**
+	 * Default construtor which create instance of a parser
+	 */
 	public LastFmApiTest() {
 		lastApi = new Parser("c8e71fc5e7255264940483b4228c010f", "lastevents");
 	}

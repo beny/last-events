@@ -64,7 +64,7 @@ public class QueryLocation
 		}
 	}
 
-	
+
 	/**
 	 * @return JSON data representation.
 	 */
@@ -79,7 +79,7 @@ public class QueryLocation
 		return namesJSON.toJSONString();
 	}
 
-	
+	// getters
 	public String getKeyword() { return this.keyword; }
 	public ArrayList<String> getNames() { return this.names; }
 }

@@ -78,6 +78,7 @@ public class QueryTag
 		return namesJSON.toJSONString();
 	}
 
+	// getters
 	public String getKeyword() { return this.keyword; }
 	public ArrayList<String> getNames() { return this.names; }
 }
